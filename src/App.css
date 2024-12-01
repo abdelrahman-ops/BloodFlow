@@ -40,3 +40,11 @@
 .read-the-docs {
   color: #888;
 } */
+
+.blood {
+  will-change: filter;
+  transition: filter 300ms;
+}
+.blood:hover {
+  filter: drop-shadow(0 0 2em #d13109de);
+}
