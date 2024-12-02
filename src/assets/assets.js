@@ -11,6 +11,10 @@ import arrow1Image from './icons/fromarrow.png';
 import arrow2Image from './icons/toarrow.png';
 
 import blood from './icons/blood.png';
+import logo from './icons/logoF.png';
+import logo2 from './icons/logo2.png';
+import logo3 from './icons/logo3.png';
+import logo4 from './icons/lh.png';
 
 // Exporting an object containing all assets
 const assets = {
@@ -27,6 +31,10 @@ const assets = {
     },
     icons:{
         blood: blood,
+        logo: logo,
+        logo2: logo2,
+        logo3: logo3,
+        logo4: logo4,
     }
 };
 
