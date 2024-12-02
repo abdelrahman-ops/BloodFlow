@@ -1,42 +1,39 @@
 import { motion } from 'framer-motion';
 import { AiOutlineEye } from 'react-icons/ai'; // Importing the open icon from React Icons
-import inventory from '../assets/inventory.jpg';
-import support from '../assets/support.jpg';
-import doctors from '../assets/doctors.jpg';
-import donor from '../assets/donor.jpg';
+import assets from '../assets/assets.js'
 
 function LandingPage() {
     return (
         <div className="min-h-screen">
-            <section id="features" className="py-16 px-4 sm:px-8 bg-gray-100">
+            <section id="features" className="py-6 px-4 sm:px-8 bg-gray-100">
                 <h3 className="text-3xl font-bold text-center mb-12">
                     Why Choose BloodFlow?
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 gap-y-6">
                     {/* Card Components */}
                     {[
                         {
                             title: 'Real-Time Blood Inventory',
                             description: 'Track available blood types and ensure timely distribution during emergencies.',
-                            imgSrc: inventory,
+                            imgSrc: assets.images.inventory,
                             altText: 'Real-Time Blood Inventory',
                         },
                         {
                             title: 'Integrated with Hospitals',
                             description: 'Seamlessly connect with healthcare centers for efficient blood requests and delivery.',
-                            imgSrc: doctors,
+                            imgSrc: assets.images.doctors,
                             altText: 'Integrated with Hospitals',
                         },
                         {
                             title: 'Engage Donors Easily',
                             description: 'Use advanced technology to remind and engage donors through mobile apps and notifications.',
-                            imgSrc: donor,
+                            imgSrc: assets.images.donor,
                             altText: 'Engage Donors Easily',
                         },
                         {
                             title: 'Community Support',
                             description: 'Join a network of donors and recipients to build a supportive community.',
-                            imgSrc: support,
+                            imgSrc: assets.images.support,
                             altText: 'Community Support',
                         },
                     ].map((card, index) => (
@@ -45,19 +42,25 @@ function LandingPage() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="bg-white shadow-md p-4 sm:p-6 rounded-b-full rounded-tl-[1500px] 
-                            rounded-tr-full flex flex-col justify-between items-center overflow-hidden transition-transform 
-                            hover:scale-105 duration-300 w-full sm:w-[95%] md:w-[85%] lg:w-full mx-auto relative hover:bg-red-500 hover:bg-opacity-30"
+                            className="bg-white shadow-md p-4 sm:p-6 
+                            rounded-tl-2xl rounded-tr-[90px] rounded-b-[100px] mx-auto
+                            flex flex-col justify-between items-center 
+                            overflow-hidden transition-transform 
+                            hover:scale-105 duration-300  relative"
+                            // style={{ width: '250px', height: '400px' }}
                         >
-                            <h4 className="text-lg sm:text-xl font-bold mb-4 text-center">
-                                {card.title}
-                            </h4>
-                            <p className="mb-6 text-sm sm:text-base text-center">
-                                {card.description}
-                            </p>
+                            <div className="text-center block max-w-40 justify-center">
+                                <h4 className="text-lg sm:text-xl font-bold  text-gray-800  max-h-20">
+                                    {card.title}
+                                </h4>
+                                <p className="relative text-sm sm:text-base mt-2 text-gray-600">
+                                    {card.description}
+                                </p>
+                            </div>
+                            
 
                             {/* Image container with the icon */}
-                            <div className="relative w-full flex justify-center items-center">
+                            <div className="relative w-full flex justify-center items-center mt-4">
                                 <img
                                     src={card.imgSrc}
                                     alt={card.altText}
