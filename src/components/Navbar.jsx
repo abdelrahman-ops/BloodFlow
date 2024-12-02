@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 // import BD3 from '../assets/blood3png.png';
 import assets from '../assets/assets.js'
+import { useLanguage } from '../hooks/LanguageContext.jsx';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { language, toggleLanguage } = useLanguage();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,6 +25,21 @@ const Navbar = () => {
         };
     }, []);
 
+    const labels = {
+        en: {
+            about: "About",
+            features: "Features",
+            contact: "Contact",
+            donate: "Donate Now",
+        },
+        ar: {
+            about: "عن المشروع",
+            features: "الميزات",
+            contact: "تواصل معنا",
+            donate: "تبرع الآن",
+        },
+    };
+
     return (
         <>
                 <motion.nav
@@ -35,17 +52,44 @@ const Navbar = () => {
                 >
                     <div className='flex justify-between items-center'>
 
-                        <h1 className="text-xl md:text-2xl font-bold">BloodFlow</h1>
+                        <h1 className="text-xl md:text-2xl font-bold flex flex-row">
+                            {/* <span><img src={assets.icons.blood} className='h-10' alt="" /></span> */}
+                            BloodFlow
+                        </h1>
                         
-                        <ul className="hidden md:flex space-x-6">
-                            <li><a href="#about" className="hover:underline">About</a></li>
-                            <li><a href="#features" className="hover:underline">Features</a></li>
-                            <li><a href="#contact" className="hover:underline">Contact</a></li>
+                        <ul
+                            className={`hidden md:flex space-x-14 ${
+                                language === "ar" ? "flex-row" : ""
+                            }`}
+                            >
+                            <li>
+                                <a href="#about" className="hover:underline">
+                                {labels[language].about}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#features" className="hover:underline">
+                                {labels[language].features}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#contact" className="hover:underline">
+                                {labels[language].contact}
+                                </a>
+                            </li>
                         </ul>
 
-                        <button className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200">
-                            Donate Now
-                        </button>
+                        <div className="flex items-center space-x-4">
+                            <button className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200">
+                                {labels[language].donate}
+                            </button>
+                            <button
+                                className="text-white bg-gray-800 px-3 py-2 rounded hover:bg-gray-700"
+                                onClick={toggleLanguage}
+                            >
+                                {language === "en" ? "عربي" : "English"}
+                            </button>
+                        </div>
 
                         <button
                             className="md:hidden text-white focus:outline-none"

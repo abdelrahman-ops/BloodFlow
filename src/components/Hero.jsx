@@ -1,8 +1,27 @@
 // import hero from '../assets/hero.jpg';
-import assets from '../assets/assets.js'
+import assets from '../assets/assets.js';
+import { useLanguage } from '../hooks/LanguageContext.jsx';
+
 const Hero = () => {
+    const { language } = useLanguage();
+
+    const textContent = {
+        en: {
+            heading: "Save Lives with Every Drop",
+            description: "Join our mission to bridge the gap between blood donors and those in need. Together, we can make a difference.",
+            button: "Learn More",
+        },
+        ar: {
+            heading: "أنقذ الأرواح مع كل قطرة",
+            description: "انضم إلى مهمتنا لسد الفجوة بين المتبرعين بالدم والمحتاجين. معًا، يمكننا إحداث فرق.",
+            button: "تعرف أكثر",
+        },
+    };
+
+    const content = textContent[language];
+
     return (
-        <header className="relative w-full h-[70vh] md:h-[80vh] sm:h-[60vh]">
+        <section id="about" className="relative w-full h-[70vh] md:h-[80vh] sm:h-[60vh]">
             <div className="absolute inset-0 z-0">
                 <img
                     src={assets.images.hero}
@@ -24,20 +43,23 @@ const Hero = () => {
                     ></path>
                 </svg>
             </div>
-            <div className="relative z-30 flex flex-col items-center justify-center h-full text-white px-6 md:px-12 text-center">
+            <div
+                className={`relative z-30 flex flex-col items-center justify-center h-full text-white px-6 md:px-12 text-center ${
+                    language === "ar" ? "rtl" : "ltr"
+                }`}
+            >
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-                    Save Lives with Every Drop
+                    {content.heading}
                 </h2>
                 <p className="mt-4 text-base md:text-lg lg:text-xl max-w-2xl">
-                    Join our mission to bridge the gap between blood donors and those in need. 
-                    Together, we can make a difference.
+                    {content.description}
                 </p>
                 <button className="mt-6 bg-white text-red-600 px-4 py-2 md:px-6 md:py-3 rounded font-semibold hover:bg-gray-200 transition duration-200">
-                    Learn More
+                    {content.button}
                 </button>
             </div>
-        </header>
+        </section>
     );
-}
+};
 
 export default Hero;
