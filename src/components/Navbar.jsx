@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import BD3 from '../assets/blood3png.png';
+// import BD3 from '../assets/blood3png.png';
+import assets from '../assets/assets.js'
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -86,7 +87,7 @@ const Navbar = () => {
                                 hidden md:flex fixed  blood
                     "
                     style={{
-                        backgroundImage: `url(${BD3})`,
+                        backgroundImage: `url(${assets.icons.blood})`,
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover', // Ensures it fills the container

@@ -1,11 +1,11 @@
-import hero from '../assets/hero.jpg';
-
+// import hero from '../assets/hero.jpg';
+import assets from '../assets/assets.js'
 const Hero = () => {
     return (
         <header className="relative w-full h-[70vh] md:h-[80vh] sm:h-[60vh]">
             <div className="absolute inset-0 z-0">
                 <img
-                    src={hero}
+                    src={assets.images.hero}
                     alt="Hero"
                     className="w-full h-full object-cover"
                 />
