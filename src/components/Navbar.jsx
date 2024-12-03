@@ -79,26 +79,28 @@ const Navbar = () => {
                             </li>
                         </ul>
 
-                        <div className="flex items-center space-x-4">
-                            <button className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200">
-                                {labels[language].donate}
-                            </button>
+                        <div className='flex flex-row justify-between gap-3'>
+                            <div className="flex items-center space-x-4">
+                                <button className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200">
+                                    {labels[language].donate}
+                                </button>
+                                <button
+                                    className="text-white bg-gray-800 px-4 py-2 rounded-[1500px] hover:bg-gray-700"
+                                    onClick={toggleLanguage}
+                                >
+                                    {language === "en" ? "عربي" : "English"}
+                                </button>
+                            </div>
+
                             <button
-                                className="text-white bg-gray-800 px-3 py-2 rounded hover:bg-gray-700"
-                                onClick={toggleLanguage}
+                                className="md:hidden text-white focus:outline-none"
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
                             >
-                                {language === "en" ? "عربي" : "English"}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
+                                </svg>
                             </button>
                         </div>
-
-                        <button
-                            className="md:hidden text-white focus:outline-none"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
-                            </svg>
-                        </button>
 
                     </div>
 
