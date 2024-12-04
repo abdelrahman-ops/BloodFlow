@@ -45,6 +45,7 @@ function App() {
             <ScrollToTop />
         </LanguageProvider> */}
 
+
         <LanguageProvider>
             <Router>
                 <Routes>
