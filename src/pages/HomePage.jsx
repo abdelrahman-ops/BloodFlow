@@ -3,7 +3,7 @@ import Hero from "../components/Hero.jsx";
 import Search from "../components/Search.jsx";
 import Stats from "../components/Stats.jsx";
 import Join from "../components/Join.jsx";
-import Features from './Features.jsx'
+import Features from '../components/Features.jsx'
 import Footer from "../components/Footer.jsx";
 
 const HomePage = () => {
