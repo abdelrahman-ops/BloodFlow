@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 // import BD3 from '../assets/blood3png.png';
 import assets from '../assets/assets.js'
 import { useLanguage } from '../hooks/LanguageContext.jsx';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -27,16 +28,18 @@ const Navbar = () => {
 
     const labels = {
         en: {
-            about: "About",
+            about: "About Us",
+            events: "Events",
             features: "Features",
-            contact: "Contact",
-            donate: "Donate Now",
+            contact: "Contact Us",
+            donate: "Login",
         },
         ar: {
             about: "عن المشروع",
+            events: "ايفنتس",
             features: "الميزات",
             contact: "تواصل معنا",
-            donate: "تبرع الآن",
+            donate: "سجل",
         },
     };
 
@@ -63,20 +66,26 @@ const Navbar = () => {
                             }`}
                             >
                             <li>
-                                <a href="#about" className="hover:underline">
-                                {labels[language].about}
-                                </a>
+                                <Link to="/about-us" className="hover:underline">
+                                    {labels[language].about}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/events" className="hover:underline">
+                                    {labels[language].events}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/contact-us" className="hover:underline">
+                                    {labels[language].contact}
+                                </Link>
                             </li>
                             <li>
                                 <a href="#features" className="hover:underline">
-                                {labels[language].features}
+                                    {labels[language].features}
                                 </a>
                             </li>
-                            <li>
-                                <a href="#contact" className="hover:underline">
-                                {labels[language].contact}
-                                </a>
-                            </li>
+                            
                         </ul>
 
                         <div className='flex flex-row justify-between gap-3'>
