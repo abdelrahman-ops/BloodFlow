@@ -52,13 +52,14 @@ const Stats = () => {
     }, [content.stats]);
 
     return (
-        <section>
-            <div className="py-2 px-6 rounded-lg relative z-20">
-                <h2 className="text-center text-2xl sm:text-4xl font-bold text-gray-800 mb-3">
+        <section className="bg-gray-100 py-4">
+            <div className="container mx-auto text-center">
+                {/* <h2 className="text-center text-2xl sm:text-4xl font-bold text-gray-800 mb-3">
                     {content.statsTitle}
-                </h2>
-                
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                </h2> */}
+                <div className="mt-6 flex flex-wrap justify-center gap-4">
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center my-6">
                     {content.stats.map((stat, index) => (
                         <div
                             key={index}
@@ -90,7 +91,9 @@ const Stats = () => {
                             </p>
                         </div>
                     ))}
+                    </div>
                 </div>
+				
             </div>
         </section>
     );

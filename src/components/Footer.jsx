@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
     return (
-        <footer id="contact" className="relative bg-gray-800 text-white pt-10 pb-8 text-center">
+        <footer id="contact" className="relative bg-gray-800 text-white py-8 text-center">
             {/* Smoother Wave SVG at the top */}
             {/* <div className="absolute inset-x-0 -top-28 z-10">
                 <svg
@@ -17,11 +19,28 @@ const Footer = () => {
             </div> */}
             {/* Footer Content */}
             
-            <div className="relative">
+            {/* <div className="relative">
                 <p className="text-lg font-bold">Contact Us</p>
                 <p>Email: <a href="mailto:support@BloodFlow.com" className="text-red-500 hover:underline">support@BloodFlow.com</a></p>
                 <p>Phone: <a href="tel:+20123456789" className="text-red-500 hover:underline">+20 123 456 789</a></p>
                 <p className="mt-4">© 2024 BloodFlow Blood Bank. All rights reserved.</p>
+            </div> */}
+
+            <div className="container mx-auto text-center">
+                <p>
+                    &copy; 2024 BloodFlow Blood Bank. All rights reserved.
+                </p>
+                <div className="mt-4 space-x-4">
+                    <Link to="/privacy-policy" className="text-gray-400 hover:text-white">
+                        Privacy Policy
+                    </Link>
+                    <Link to="/terms" className="text-gray-400 hover:text-white">
+                        Terms of Service
+                    </Link>
+                    <Link to="/contact-us" className="text-gray-400 hover:text-white">
+                        Contact Us
+                    </Link>
+                </div>
             </div>
             
         </footer>

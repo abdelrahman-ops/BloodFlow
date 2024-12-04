@@ -42,7 +42,8 @@ const Join = () => {
         <>
             <section
                 id="donate"
-                className={`relative bg-gradient-to-r from-red-600 to-red-900 text-white text-center py-8 px-4 sm:py-12 sm:px-8 rounded-l-[100px] lg:rounded-tl-full shadow-lg ${
+                className={`relative bg-gradient-to-r from-red-600 to-red-900 text-white text-center 
+                    py-8 px-4 sm:py-12 sm:px-8 lg:rounded-tl-full md:rounded-tl-full sm:rounded-tl-full rounded-tl-[150px] shadow-lg ${
                     language === "ar" ? "rtl" : "ltr"
                 }`}
             >
