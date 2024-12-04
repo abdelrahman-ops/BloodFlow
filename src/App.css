@@ -48,3 +48,7 @@
 .blood:hover {
   filter: drop-shadow(0 0 2em #d13109de);
 }
+
+.blood.green:hover{
+  filter: drop-shadow(0 0 2em #00693E);
+}
