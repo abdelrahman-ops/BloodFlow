@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import assets from '../assets/assets.js'
 import { useLanguage } from '../hooks/LanguageContext.jsx';
 import { Link , useNavigate  } from 'react-router-dom';
+import BloodDrop from './BloodDrop.jsx';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -42,7 +42,7 @@ const Navbar = () => {
         },
         ar: {
             about: "عن المشروع",
-            events: "ايفنتس",
+            events: "أحداث",
             features: "الميزات",
             contact: "تواصل معنا",
             login: "سجل",
@@ -68,123 +68,102 @@ const Navbar = () => {
 
     return (
         <>
-                <motion.nav
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className={`${
-                        isScrolled ? "bg-red-700 shadow-lg" : "bg-red-600"
-                    } text-white py-4 px-6 md:px-8 fixed top-0 left-0 w-full z-50`}
-                >
-                    <div className='flex justify-between items-center'>
+            <motion.nav
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className={`${
+                    isScrolled ? "bg-red-700 shadow-lg" : "bg-red-600"
+                } text-white py-4 px-6 md:px-8 fixed top-0 left-0 w-full z-50`}
+            >
+                <div className='flex justify-between items-center'>
 
+                    <Link to="/">
                         <h1 className="text-xl md:text-2xl font-bold flex flex-row">
                             BloodFlow
                         </h1>
-                        
-                        <ul className={`hidden md:flex space-x-14 `} >
-                            <li>
-                                <Link to="/about-us" className="hover:underline">
-                                    {labels[language].about}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/events" className="hover:underline">
-                                    {labels[language].events}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/contact-us" className="hover:underline">
-                                    {labels[language].contact}
-                                </Link>
-                            </li>
-                            <li>
-                                <a href="#features" className="hover:underline">
-                                    {labels[language].features}
-                                </a>
-                            </li>
-                            
-                        </ul>
-
-                        <div className='flex flex-row justify-between gap-3'>
-                            <div className="flex items-center space-x-4">
-                                <button
-                                    onClick={handleLoginClick} 
-                                    className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200"
-                                >
-                                    {labels[language].login}
-                                </button>
-                                <button
-                                    className="text-white bg-gray-800 px-4 py-2 rounded-[1500px] hover:bg-gray-700"
-                                    onClick={toggleLanguage}
-                                >
-                                    {language === "en" ? "عربي" : "English"}
-                                </button>
-                            </div>
-
-                            <button
-                                className="md:hidden text-white focus:outline-none"
-                                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-
-
-                    {isMenuOpen && (
-                        <div className="md:hidden mt-4 space-y-4 flex flex-col items-center bg-red-700 py-4 rounded-lg shadow-lg">
+                    </Link>
+                    
+                    
+                    <ul className={`hidden md:flex space-x-14 `} >
+                        <li>
                             <Link to="/about-us" className="hover:underline">
                                 {labels[language].about}
                             </Link>
-
+                        </li>
+                        <li>
                             <Link to="/events" className="hover:underline">
                                 {labels[language].events}
                             </Link>
-                        
+                        </li>
+                        <li>
                             <Link to="/contact-us" className="hover:underline">
                                 {labels[language].contact}
                             </Link>
-
+                        </li>
+                        <li>
                             <a href="#features" className="hover:underline">
                                 {labels[language].features}
                             </a>
+                        </li>
+                        
+                    </ul>
+
+                    <div className='flex flex-row justify-between gap-3'>
+                        <div className="flex items-center space-x-4">
+                            <button
+                                onClick={handleLoginClick} 
+                                className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200"
+                            >
+                                {labels[language].login}
+                            </button>
+                            <button
+                                className="text-white bg-gray-800 px-4 py-2 rounded-[1500px] hover:bg-gray-700"
+                                onClick={toggleLanguage}
+                            >
+                                {language === "en" ? "عربي" : "English"}
+                            </button>
                         </div>
-                    )}
-                </motion.nav>
 
-                {isScrolled && (
+                        <button
+                            className="md:hidden text-white focus:outline-none"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
-                    <motion.nav
-                        initial={{ backgroundSize: '120%' }}
-                        animate={{ backgroundSize: '150%' }} 
-                        transition={{
-                            type: 'spring',
-                            stiffness: 80,
-                            damping: 20,
-                            duration: 1.2,
-                        }}
-                        className=" top-10 left-10 h-96 w-48  justify-center items-center py-4 z-50 rounded-full hidden md:flex fixed  blood"
-                        style={{
-                            backgroundImage: `url(${assets.icons.blood})`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'center',
-                            backgroundSize: 'cover',
-                        }}
-                    >
+
+
+                {isMenuOpen && (
+                    <div className="md:hidden mt-4 space-y-4 flex flex-col items-center bg-red-700 py-4 rounded-lg shadow-lg">
+                        <Link to="/about-us" className="hover:underline">
+                            {labels[language].about}
+                        </Link>
+
+                        <Link to="/events" className="hover:underline">
+                            {labels[language].events}
+                        </Link>
                     
-                        <ul className="flex flex-col justify-center items-center space-y-4 text-white">
-                            <li> <Link to="/about-us" className=" hover:text-gray-200"> {labels[language].about} </Link> </li>
-                            <li> <Link to="/events" className="hover:text-gray-200"> {labels[language].events} </Link> </li>
-                            <li> <Link to="/contact-us" className="hover:text-gray-200"> {labels[language].contact} </Link> </li>
-                        </ul>
-                    </motion.nav>
+                        <Link to="/contact-us" className="hover:underline">
+                            {labels[language].contact}
+                        </Link>
+
+                        <a href="#features" className="hover:underline">
+                            {labels[language].features}
+                        </a>
+                    </div>
                 )}
+            </motion.nav>
+
+            {isScrolled && (
+                <BloodDrop />
+            )}
                 
-                {showLoginPopup && (
+            {showLoginPopup && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg p-6 shadow-lg w-80">
                         <h2 className="text-xl font-bold text-center mb-4">
@@ -192,13 +171,13 @@ const Navbar = () => {
                         </h2>
                         <div className="flex flex-col space-y-4">
                             <button
-                                onClick={() => handleNavigation("/admin/login")}
+                                onClick={() => handleNavigation("/hospital/login")}
                                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                             >
                                 {labels[language].hospital}
                             </button>
                             <button
-                                onClick={() => handleNavigation("/donor/login")}
+                                onClick={() => handleNavigation("/user/login")}
                                 className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900"
                             >
                                 {labels[language].donor}
