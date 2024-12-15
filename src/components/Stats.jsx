@@ -52,7 +52,7 @@ const Stats = () => {
     }, [content.stats]);
 
     return (
-        <section className="bg-gray-100 py-4">
+        <section className="pb-4">
             <div className="container mx-auto text-center">
                 {/* <h2 className="text-center text-2xl sm:text-4xl font-bold text-gray-800 mb-3">
                     {content.statsTitle}
