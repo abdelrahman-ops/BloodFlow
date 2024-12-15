@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const ContactUs = () => {
   const handleFormSubmit = (e) => {
@@ -13,7 +13,7 @@ const ContactUs = () => {
         <p className="mt-4">We are here to help you with any queries or concerns.</p>
       </section>
 
-      <section className="py-16 bg-gray-100">
+      <section className="py-16">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center text-red-600">Get in Touch</h2>
           <form onSubmit={handleFormSubmit} className="mt-8 max-w-2xl mx-auto space-y-4">

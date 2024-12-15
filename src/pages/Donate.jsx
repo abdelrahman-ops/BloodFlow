@@ -66,7 +66,7 @@ const DonateBlood = () => {
         </section>
 
         {/* Donation Drives */}
-        <section className="py-16 bg-gray-100">
+        <section className="py-16">
             <div className="container mx-auto text-center">
             <h2 className="text-3xl font-bold text-red-600">Upcoming Donation Drives</h2>
             <p className="mt-4 text-gray-700">Stay tuned for upcoming events near you!</p>

@@ -22,7 +22,7 @@ const BloodRequests = () => {
         </section>
 
         {/* Request Form */}
-        <section className="py-16 bg-gray-100">
+        <section className="py-16 ">
             <div className="container mx-auto">
             <h2 className="text-3xl font-bold text-center text-red-600">Submit a Blood Request</h2>
             <form onSubmit={handleFormSubmit} className="mt-8 max-w-2xl mx-auto space-y-4">
@@ -71,7 +71,7 @@ const BloodRequests = () => {
             <h2 className="text-3xl font-bold text-center text-red-600">Active Blood Requests</h2>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {requests.map((request, index) => (
-                <div key={index} className="p-4 bg-gray-100 shadow rounded">
+                <div key={index} className="p-4 shadow rounded">
                     <p>
                     <strong>Blood Type:</strong> {request.bloodType}
                     </p>

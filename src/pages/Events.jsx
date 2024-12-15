@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const EventsAndCampaigns = () => {
   const events = [
@@ -25,7 +25,7 @@ const EventsAndCampaigns = () => {
           <h2 className="text-3xl font-bold text-center text-red-600">Upcoming Events</h2>
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             {events.map((event, index) => (
-              <div key={index} className="p-4 bg-gray-100 shadow rounded">
+              <div key={index} className="p-4 shadow rounded">
                 <h3 className="text-xl font-semibold">{event.name}</h3>
                 <p>{event.date}</p>
                 <p>{event.location}</p>
@@ -39,7 +39,7 @@ const EventsAndCampaigns = () => {
       </section>
 
       {/* Volunteer Sign-Up */}
-      <section className="py-16 bg-gray-100">
+      <section className="py-16">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center text-red-600">Sign Up as a Volunteer</h2>
           <form onSubmit={handleVolunteerSubmit} className="mt-8 max-w-2xl mx-auto space-y-4">

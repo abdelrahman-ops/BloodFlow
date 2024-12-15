@@ -14,7 +14,7 @@ const AboutUs = () => {
         </section>
 
         {/* Mission Statement */}
-        <section className="py-16 bg-gray-100 text-center">
+        <section className="py-16 text-center">
             <div className="container mx-auto">
             <h2 className="text-3xl font-bold text-red-600">Our Mission</h2>
             <p className="mt-4 text-gray-700 max-w-3xl mx-auto">
@@ -34,7 +34,7 @@ const AboutUs = () => {
         </section>
 
         {/* Success Stories */}
-        <section className="py-16 bg-gray-100">
+        <section className="py-16 ">
             <div className="container mx-auto text-center">
             <h2 className="text-3xl font-bold text-red-600">Success Stories</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
