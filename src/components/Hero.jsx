@@ -28,7 +28,7 @@ const Hero = () => {
         },
         ar: {
             heading: "أنقذ الأرواح مع كل قطرة",
-            description: "انضم إلى مهمتنا لسد الفجوة بين المتبرعين بالدم والمحتاجين. معًا، يمكننا إحداث فرق.",
+            description: "انضم إلى مهمتنا لسد الفجوة بين المتبرعين بالدم والمحتاجين. معًا، يمكننا إحداث فرق",
             donorOption: "أنا متبرع",
             needBloodOption: "أحتاج إلى دم",
         },
@@ -40,28 +40,26 @@ const Hero = () => {
         <section 
             className="relative text-white py-16 text-center h-[50vh] md:h-[60vh] sm:h-[45vh] mt-10"
             style={{
-                backgroundImage: `url('${assets.images.inventory}')`,
+                backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),url('${assets.images.inventory}')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             }}
         >
-        {/* <div className="absolute inset-0 bg-red-500 bg-opacity-30 z-10"></div> */}
+        <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
         <div
-            className={`container mx-auto ${
-                language === "ar" ? "rtl" : "ltr"
-            }`}
+            className={`container mx-auto ${language === "ar" ? "rtl" : "ltr" }`}
         >
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 z-10 relative">
                 {content.heading}
             </h1>
-            <p className="max-w-xl mx-auto mt-4 text-lg lg:text-2xl">
+            <p className="max-w-xl mx-auto mt-4 text-lg lg:text-2xl z-10 relative">
                 {content.description}
             </p>
             {/* <button className="mt-6 bg-white text-red-600 px-4 py-2 md:px-6 md:py-3 rounded font-semibold hover:bg-gray-200 transition duration-200">
                 {content.button}
             </button> */}
 
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-6 flex flex-wrap justify-center gap-4 z-10 relative">
                 <Link
                     to="/blood-requests"
                     className="px-6 py-3 bg-white text-red-600 rounded shadow hover:bg-gray-200 transition duration-200 blood"
