@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useLanguage } from "../hooks/LanguageContext";
 import UserType from "./UserType";
+import assets from '../assets/assets.js';
 
 const Join = () => {
     const [showPopup, setShowPopup] = useState(false);
-    const [userType, setUserType] = useState(null);
     const { language } = useLanguage();
 
     const textContent = {
@@ -34,23 +34,28 @@ const Join = () => {
         setShowPopup(false);
     };
 
-    const handleSelection = (type) => {
-        setUserType(type);
-    };
+
 
     return (
         <>
             <section
                 id="donate"
                 className={`relative bg-gradient-to-r from-red-600 to-red-900 text-white text-center 
-                    py-8 px-4 sm:py-12 sm:px-8 lg:rounded-tl-full md:rounded-tl-full sm:rounded-tl-full rounded-tl-[150px] shadow-lg ${
+                    py-8 px-4 sm:py-12 sm:px-8 shadow-lg ${
                     language === "ar" ? "rtl" : "ltr"
                 }`}
+                style={{
+                    backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),url('${assets.images.doctors}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                }}
             >
-                <h3 className="text-2xl sm:text-4xl font-bold mb-4">{content.heading}</h3>
-                <p className="text-xs sm:text-base mt-4">{content.description}</p>
+                <div className="absolute inset-0 bg-[#0D1321] bg-opacity-50 z-0"></div>
+                <h3 className="text-2xl sm:text-4xl font-bold mb-4 z-10 relative">{content.heading}</h3>
+                <p className="text-xs sm:text-base mt-4 z-10 relative">{content.description}</p>
                 <button
-                    className="mt-6 bg-white text-red-600 px-5 py-2 sm:px-6 sm:py-3 rounded-full font-semibold shadow-lg hover:bg-gray-100 transition duration-300"
+                    className="mt-6 bg-white text-red-600 px-5 py-2 sm:px-6 sm:py-3 
+                    rounded-full font-semibold shadow-lg hover:bg-gray-100 transition duration-300 z-10 relative"
                     onClick={handleButtonClick}
                 >
                     {content.button}
@@ -58,13 +63,7 @@ const Join = () => {
             </section>
 
             {showPopup && (
-                <UserType closePopup={closePopup} onSelection={handleSelection} />
-            )}
-
-            {userType && (
-                <div className="text-center bg-green-600 text-white p-6">
-                    {userType === 'donor' ? content.donorSuccess : content.receiverSuccess}
-                </div>
+                <UserType closePopup={closePopup} />
             )}
         </>
     );

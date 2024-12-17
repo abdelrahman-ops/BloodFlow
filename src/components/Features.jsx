@@ -17,25 +17,25 @@ function Features() {
                 {
                     title: 'Real-Time Blood Inventory',
                     description: 'Track available blood types and ensure timely distribution during emergencies.',
-                    imgSrc: assets.images.inventory,
+                    imgSrc: assets.images.unit,
                     altText: 'Real-Time Blood Inventory',
                 },
                 {
                     title: 'Integrated with Hospitals',
                     description: 'Seamlessly connect with healthcare centers for efficient blood requests and delivery.',
-                    imgSrc: assets.images.doctors,
+                    imgSrc: assets.images.donor,
                     altText: 'Integrated with Hospitals',
                 },
                 {
                     title: 'Engage Donors Easily',
                     description: 'Use advanced technology to remind and engage donors through mobile apps and notifications.',
-                    imgSrc: assets.images.donor,
+                    imgSrc: assets.images.hdonor,
                     altText: 'Engage Donors Easily',
                 },
                 {
                     title: 'Community Support',
                     description: 'Join a network of donors and recipients to build a supportive community.',
-                    imgSrc: assets.images.support,
+                    imgSrc: assets.images.support1,
                     altText: 'Community Support',
                 },
             ]

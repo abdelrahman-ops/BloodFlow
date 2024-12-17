@@ -126,7 +126,7 @@ const Search = () => {
                     {currentPage > 1 && (
                         <button
                             onClick={() => paginate(currentPage - 1)}
-                            className="px-4 py-2 bg-gray-300 text-black rounded"
+                            className="px-4 py-2 bg-gray-300 text-[#0D1321] rounded"
                         >
                             Previous
                         </button>
@@ -134,7 +134,7 @@ const Search = () => {
                     {currentPage < Math.ceil(results.length / resultsPerPage) && (
                         <button
                             onClick={() => paginate(currentPage + 1)}
-                            className="px-4 py-2 bg-gray-300 text-black rounded"
+                            className="px-4 py-2 bg-gray-300 text-[#0D1321] rounded"
                         >
                             Next
                         </button>

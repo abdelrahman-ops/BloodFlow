@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
     return (
-        <footer id="contact" className="relative bg-gray-800 text-white py-8 text-center">
+        <footer id="contact" className="relative bg-[#0D1321] text-white py-8 text-center">
             {/* Smoother Wave SVG at the top */}
             {/* <div className="absolute inset-x-0 -top-28 z-10">
                 <svg

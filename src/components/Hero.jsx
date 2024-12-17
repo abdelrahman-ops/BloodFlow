@@ -38,14 +38,14 @@ const Hero = () => {
 
     return (
         <section 
-            className="relative text-white py-16 text-center h-[50vh] md:h-[60vh] sm:h-[45vh] mt-10"
+            className="relative text-white py-16 text-center h-[40vh] sm:h-[40vh] md:h-[60vh] mt-10"
             style={{
                 backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),url('${assets.images.inventory}')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             }}
         >
-        <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
+        <div className="absolute inset-0 bg-[#0D1321] bg-opacity-50 z-0"></div>
         <div
             className={`container mx-auto ${language === "ar" ? "rtl" : "ltr" }`}
         >

@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Link } from "react-router-dom";
 import { useLanguage } from "../hooks/LanguageContext";
 
 const UserType = ({ closePopup, onSelection }) => {
@@ -25,22 +26,25 @@ const UserType = ({ closePopup, onSelection }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white text-black rounded-lg p-6 w-80 sm:w-96">
-                <p className="text-lg font-bold mb-4">{content.popupQuestion}</p>
-                <div className="flex flex-col gap-4">
-                    <button
+        <div className="fixed inset-0 bg-[#0D1321] bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white text-[#0D1321] rounded-lg p-6 w-80 sm:w-96">
+                <h4 className="text-lg font-semibold mb-4">{content.popupQuestion}</h4>
+                
+                <div className="flex flex-col gap-4 justify-center text-center">
+                    <Link
+                        to='/donate-blood'
                         className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition duration-300"
                         onClick={() => handleSelection('donor')}
                     >
                         {content.donorOption}
-                    </button>
-                    <button
+                    </Link>
+                    <Link
+                        to='/blood-requests'
                         className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition duration-300"
                         onClick={() => handleSelection('receiver')}
                     >
                         {content.needBloodOption}
-                    </button>
+                    </Link>
                 </div>
                 <button
                     className="mt-4 text-red-600 underline text-sm"

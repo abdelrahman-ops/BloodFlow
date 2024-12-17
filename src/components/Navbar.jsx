@@ -14,7 +14,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 100) {
+            if (window.scrollY > 20) {
                 setIsScrolled(true);
             } else {
                 setIsScrolled(false);
@@ -118,7 +118,7 @@ const Navbar = () => {
                                 {labels[language].login}
                             </button>
                             <button
-                                className="text-white bg-gray-800 px-4 py-2 rounded-[1500px] hover:bg-gray-700"
+                                className="text-white bg-[#0D1321] px-4 py-2 rounded-[1500px] hover:bg-gray-700"
                                 onClick={toggleLanguage}
                             >
                                 {language === "en" ? "عربي" : "English"}
@@ -159,12 +159,12 @@ const Navbar = () => {
                 )}
             </motion.nav>
 
-            {isScrolled && (
+            {/* {isScrolled && (
                 <BloodDrop />
-            )}
+            )} */}
                 
             {showLoginPopup && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="fixed inset-0 bg-[#0D1321] bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg p-6 shadow-lg w-80">
                         <h2 className="text-xl font-bold text-center mb-4">
                             {labels[language].loginAs}
