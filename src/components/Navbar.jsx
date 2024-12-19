@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/LanguageContext.jsx';
-import { Link , useNavigate  } from 'react-router-dom';
-import BloodDrop from './BloodDrop.jsx';
+import { Link, useNavigate } from 'react-router-dom';
+import assets from '../assets/assets.js';
+import { useAuth } from '../hooks/AuthContext.jsx';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
     const { language, toggleLanguage } = useLanguage();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const handleScroll = () => {
@@ -35,7 +36,7 @@ const Navbar = () => {
             features: "Features",
             contact: "Contact Us",
             login: "Login",
-            loginAs: "Login As",
+            loginAs: "You Can Login As",
             hospital: "Hospital Admin",
             donor: "Donor",
             close: "Close",
@@ -46,7 +47,7 @@ const Navbar = () => {
             features: "الميزات",
             contact: "تواصل معنا",
             login: "سجل",
-            loginAs: "تسجيل الدخول كـ",
+            loginAs: "يمكنك تسجيل الدخول كـ",
             hospital: "مسؤول المستشفى",
             donor: "متبرع",
             close: "إغلاق",
@@ -54,16 +55,28 @@ const Navbar = () => {
     };
 
     const handleLoginClick = () => {
-        setShowLoginPopup(true);
+        if(isAuthenticated){
+            navigate('/dashboard');
+        }
+        else {
+            setShowLoginPopup(true);
+        }
+        
     };
 
     const handleClosePopup = () => {
-        setShowLoginPopup(false); 
+        setShowLoginPopup(false);
     };
 
     const handleNavigation = (path) => {
+        console.log("clicked" , isAuthenticated)
+        if (isAuthenticated) {
+            // navigate(`/dashboard/${user.id}`);
+            navigate('/donor/dashboard');
+        } else {
+            navigate(path);
+        }
         setShowLoginPopup(false);
-        navigate(path);
     };
 
     return (
@@ -76,16 +89,14 @@ const Navbar = () => {
                     isScrolled ? "bg-red-700 shadow-lg" : "bg-red-600"
                 } text-white py-4 px-6 md:px-8 fixed top-0 left-0 w-full z-50`}
             >
-                <div className='flex justify-between items-center'>
-
+                <div className="flex justify-between items-center">
                     <Link to="/">
                         <h1 className="text-xl md:text-2xl font-bold flex flex-row">
                             BloodFlow
                         </h1>
                     </Link>
-                    
-                    
-                    <ul className={`hidden md:flex space-x-14 `} >
+
+                    <ul className={`hidden md:flex space-x-14`}>
                         <li>
                             <Link to="/about-us" className="hover:underline">
                                 {labels[language].about}
@@ -102,41 +113,39 @@ const Navbar = () => {
                             </Link>
                         </li>
                         <li>
-                            <a href="#features" className="hover:underline">
+                            <a href="/#features" className="hover:underline">
                                 {labels[language].features}
                             </a>
                         </li>
-                        
                     </ul>
 
-                    <div className='flex flex-row justify-between gap-3'>
-                        <div className="flex items-center space-x-4">
-                            <button
-                                onClick={handleLoginClick} 
-                                className="hidden md:block bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-200"
-                            >
-                                {labels[language].login}
-                            </button>
-                            <button
-                                className="text-white bg-[#0D1321] px-4 py-2 rounded-[1500px] hover:bg-gray-700"
-                                onClick={toggleLanguage}
-                            >
-                                {language === "en" ? "عربي" : "English"}
-                            </button>
-                        </div>
+                    <div className="flex flex-row justify-between gap-3 items-center">
+                        <button
+                            onClick={handleLoginClick}
+                            className="text-white md:text-2xl"
+                        >
+                            <img src={assets.icons.profile} alt="" className="h-10" />
+                        </button>
+
+                        <button
+                            className="text-white bg-[#0D1321] px-4 py-2 rounded-[1500px] hover:bg-gray-700"
+                            onClick={toggleLanguage}
+                        >
+                            {language === "en" ? "عربي" : "English"}
+                        </button>
 
                         <button
                             className="md:hidden text-white focus:outline-none"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
-                            </svg>
+                            <img
+                                src={`${isMenuOpen ? assets.icons.close : assets.icons.menu2}`}
+                                className="h-10"
+                                alt=""
+                            />
                         </button>
                     </div>
                 </div>
-
-
 
                 {isMenuOpen && (
                     <div className="md:hidden mt-4 space-y-4 flex flex-col items-center bg-red-700 py-4 rounded-lg shadow-lg">
@@ -147,22 +156,18 @@ const Navbar = () => {
                         <Link to="/events" className="hover:underline">
                             {labels[language].events}
                         </Link>
-                    
+
                         <Link to="/contact-us" className="hover:underline">
                             {labels[language].contact}
                         </Link>
 
-                        <a href="#features" className="hover:underline">
+                        <a href="/#features" className="hover:underline">
                             {labels[language].features}
                         </a>
                     </div>
                 )}
             </motion.nav>
 
-            {/* {isScrolled && (
-                <BloodDrop />
-            )} */}
-                
             {showLoginPopup && (
                 <div className="fixed inset-0 bg-[#0D1321] bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg p-6 shadow-lg w-80">
@@ -171,13 +176,13 @@ const Navbar = () => {
                         </h2>
                         <div className="flex flex-col space-y-4">
                             <button
-                                onClick={() => handleNavigation("/hospital/login")}
+                                onClick={() => handleNavigation("/login")}
                                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                             >
                                 {labels[language].hospital}
                             </button>
                             <button
-                                onClick={() => handleNavigation("/user/login")}
+                                onClick={() => handleNavigation("/login")}
                                 className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900"
                             >
                                 {labels[language].donor}
