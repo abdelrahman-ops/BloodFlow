@@ -7,19 +7,23 @@ import AboutUs from './pages/AboutUs';
 import Events from './pages/Events';
 import ContactUs from './pages/Contact';
 
-import DonorDash from './pages/Dashboard/DonorDash';
-import DonorLogin from './pages/Login/DonorLogin'
-import HospitalLogin from './pages/Login/AdminLogin';
+import Register from './pages/Register';
+import Login from './pages/Login'
 
-import ScrollToTop from './components/ScrollToTop';
+import DonorDash from './pages/Dashboard/DonorDash';
 
 import Navbar from './components/Navbar';
-import Footer from './components/Footer'
+import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
+import { AuthProvider } from './hooks/AuthContext';
 import { LanguageProvider } from './hooks/LanguageContext';
 
 import './App.css';
-import AdminDash from './pages/Dashboard/AdminDash';
+import AdminDashboard from './pages/Dashboard/AdminDash';
+
+
+
 
 
 
@@ -27,6 +31,7 @@ import AdminDash from './pages/Dashboard/AdminDash';
 function App() {
     return (
         <div className='bg-gray-100'>
+            <AuthProvider>
             <LanguageProvider>
                 <Router>
                     <Navbar />
@@ -40,15 +45,17 @@ function App() {
                         <Route path="/contact-us" element={<ContactUs />} />
                         
                         <Route path="/donor/dashboard" element={<DonorDash />} />
-                        <Route path="/admin/dashboard" element={<AdminDash />} />
-                        <Route path="/hospital/login" element={<HospitalLogin />}/>
-                        <Route path="/user/login" element={<DonorLogin />}/>
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+                        <Route path="/login" element={<Login />}/>
+                        <Route path='/register' element={<Register />}></Route>
                     </Routes>
                     <Footer />
                     <ScrollToTop />
                 </Router>
             
         </LanguageProvider>
+        </AuthProvider>
         </div>
     );
 }
