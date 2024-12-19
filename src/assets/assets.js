@@ -24,6 +24,12 @@ import logo1 from './icons/logo1.png';
 import logo2 from './icons/logo2.png';
 import logo3 from './icons/logo3.png';
 import logo4 from './icons/lh.png';
+import profile_icon from './icons/profile_icon.png';
+import account from './icons/account.png'
+import menu from './icons/menu.png'
+import close from './icons/close.png'
+import menu2 from './icons/menu.svg';
+import profile from './icons/profile.svg';
 
 // Exporting an object containing all assets
 const assets = {
@@ -52,6 +58,12 @@ const assets = {
         logo2: logo2,
         logo3: logo3,
         logo4: logo4,
+        profile_icon:profile_icon,
+        account:account,
+        menu:menu,
+        close: close,
+        menu2:menu2,
+        profile:profile,
     }
 };
 
