@@ -1,48 +1,109 @@
 import { Link } from "react-router-dom";
+import assets from '../assets/assets';
+import { FaFacebookF } from "react-icons/fa";
+import { FaTwitter, FaLinkedinIn } from "react-icons/fa";
+import { IoLogoInstagram } from "react-icons/io5";
 
 const Footer = () => {
     return (
-        <footer id="contact" className="relative bg-[#0D1321] text-white py-8 text-center">
-            {/* Smoother Wave SVG at the top */}
-            {/* <div className="absolute inset-x-0 -top-28 z-10">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 320"
-                    className="w-full"
-                >
-                    <path
-                        fill="#f3f4f6"
-                        fillOpacity="1"
-                        d="M0,224C48,192,96,160,192,149.3C288,139,384,149,480,154.7C576,160,672,160,768,170.7C864,181,960,203,1056,202.7C1152,203,1248,181,1344,154.7C1392,139,1440,128,1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-                    ></path>
-                </svg>
-            </div> */}
-            {/* Footer Content */}
-            
-            {/* <div className="relative">
-                <p className="text-lg font-bold">Contact Us</p>
-                <p>Email: <a href="mailto:support@BloodFlow.com" className="text-red-500 hover:underline">support@BloodFlow.com</a></p>
-                <p>Phone: <a href="tel:+20123456789" className="text-red-500 hover:underline">+20 123 456 789</a></p>
-                <p className="mt-4">© 2024 BloodFlow Blood Bank. All rights reserved.</p>
-            </div> */}
+        <footer
+            id="contact"
+            className="relative bg-cover bg-center bg-no-repeat text-white py-12 text-center"
+            style={{
+                backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)), url('${assets.images.doctors}')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            }}
+        >
+            {/* Overlay for smooth fading effect */}
+            <div className="absolute inset-0 bg-black opacity-40"></div>
 
-            <div className="container mx-auto text-center">
-                <p>
-                    &copy; 2024 BloodFlow Blood Bank. All rights reserved.
-                </p>
-                <div className="mt-4 space-x-4">
-                    <Link to="/privacy-policy" className="text-gray-400 hover:text-white">
+            {/* Footer Content */}
+            <div className="relative z-10 container mx-auto px-6 md:px-12">
+                {/* Logo or Title */}
+                <div className="mb-8">
+                    <h2 className="text-4xl font-bold text-red-500">BloodFlow</h2>
+                    <p className="text-lg mt-2">Saving lives, one drop at a time.</p>
+                </div>
+
+                {/* Navigation Links */}
+                <div className="mt-8 flex justify-center space-x-8">
+                    <Link
+                        to="/privacy-policy"
+                        className="text-gray-300 hover:text-white transition duration-300 ease-in-out text-lg"
+                    >
                         Privacy Policy
                     </Link>
-                    <Link to="/terms" className="text-gray-400 hover:text-white">
+                    <Link
+                        to="/terms"
+                        className="text-gray-300 hover:text-white transition duration-300 ease-in-out text-lg"
+                    >
                         Terms of Service
                     </Link>
-                    <Link to="/contact-us" className="text-gray-400 hover:text-white">
+                    <Link
+                        to="/contact-us"
+                        className="text-gray-300 hover:text-white transition duration-300 ease-in-out text-lg"
+                    >
                         Contact Us
                     </Link>
                 </div>
+
+                {/* Social Media Links */}
+                <div className="mt-8 flex justify-center space-x-6 text-2xl">
+                    <a
+                        href="https://facebook.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-300 hover:text-red-500 transition duration-300 ease-in-out"
+                    >
+                        <FaFacebookF />
+                    </a>
+                    <a
+                        href="https://twitter.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-300 hover:text-red-500 transition duration-300 ease-in-out"
+                    >
+                        <FaTwitter />
+                    </a>
+                    <a
+                        href="https://instagram.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-300 hover:text-red-500 transition duration-300 ease-in-out"
+                    >
+                        <IoLogoInstagram />
+                    </a>
+                    <a
+                        href="https://linkedin.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-300 hover:text-red-500 transition duration-300 ease-in-out"
+                    >
+                        <FaLinkedinIn />
+                    </a>
+                </div>
+
+                {/* Subscription Form */}
+                <div className="mt-8">
+                    <p className="text-xl mb-4">Stay updated with our latest news</p>
+                    <div className="flex justify-center items-center space-x-4">
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            className="py-2 px-4 rounded-l-lg border-2 border-red-500 text-black focus:outline-none focus:ring-2 focus:ring-red-500"
+                        />
+                        <button className="py-2 px-6 rounded-r-lg bg-red-500 text-white hover:bg-red-600 transition duration-300 ease-in-out">
+                            Subscribe
+                        </button>
+                    </div>
+                </div>
+
+                {/* Copyright */}
+                <div className="mt-8 text-sm">
+                    <p>&copy; 2024 BloodFlow Blood Bank. All rights reserved.</p>
+                </div>
             </div>
-            
         </footer>
     );
 };

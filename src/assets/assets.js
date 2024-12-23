@@ -30,6 +30,9 @@ import menu from './icons/menu.png'
 import close from './icons/close.png'
 import menu2 from './icons/menu.svg';
 import profile from './icons/profile.svg';
+import body from './img/body.png'
+import emailUnread from './icons/emailUnread.svg'
+import bb from './icons/body.svg'
 
 // Exporting an object containing all assets
 const assets = {
@@ -46,6 +49,8 @@ const assets = {
         support1: support1,
         hdonor:hdonor,
         unit: unit,
+        body: body,
+        
     },
     arrows: {
         down: arrow1Image,
@@ -64,6 +69,8 @@ const assets = {
         close: close,
         menu2:menu2,
         profile:profile,
+        emailUnread: emailUnread,
+        bb:bb,
     }
 };
 

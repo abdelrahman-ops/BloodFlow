@@ -1,7 +1,18 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import {
+    LineChart,
+    Line,
+    PieChart,
+    Pie,
+    Cell,
+    Tooltip,
+    ResponsiveContainer,
+} from "recharts";
+import { FaBell } from "react-icons/fa";
+import BookingModal from "../../components/BookingModal";
+import Notification from "../../components/Notification";
 
 const DonorDashboard = () => {
     const [userData, setUserData] = useState({
@@ -9,7 +20,6 @@ const DonorDashboard = () => {
         email: "johndoe@example.com",
         phone: "+1234567890",
         bloodType: "O+",
-        lastDonationDate: "2024-09-15",
         donationHistory: [
             {
                 date: "2024-03-20",
@@ -27,138 +37,286 @@ const DonorDashboard = () => {
                 status: "Completed",
             },
         ],
+        donorLevel: "Silver",
+        points: 250,
     });
+    
     const [nextDonationDate, setNextDonationDate] = useState("");
+    const [daysUntilNextDonation, setDaysUntilNextDonation] = useState(0);
+    const [showBookingModal, setShowBookingModal] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [donorNotifications, setDonorNotifications] = useState([
+        {
+        message: `Urgent! A patient nearby needs O+ blood.`,
+        urgency: "High",
+        distance: "2 km",
+        read: false,
+        },
+        {
+        message: `A patient is in need of O+ blood. Can you help?`,
+        urgency: "Medium",
+        distance: "5 km",
+        read: false,
+        },
+    ]);
+    
+    const COLORS = ["#FF8042", "#0088FE", "#00C49F", "#FFBB28"];
+
+    const donationStats = [
+        { month: "Jan", donations: 2 },
+        { month: "Feb", donations: 3 },
+        { month: "Mar", donations: 4 },
+        { month: "Apr", donations: 1 },
+        { month: "May", donations: 2 },
+        { month: "Jun", donations: 3 },
+    ];
 
     useEffect(() => {
-        
         const fetchUserData = async () => {
             try {
-                const token = localStorage.getItem("userData");
-                const response = await axios.get(
-                    "https://server-e-commerce-seven.vercel.app/api/donors/me", // TO DO Replace with your API endpoint //
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-                setUserData(response.data);
-                calculateNextDonation(response.data.lastDonationDate);
+                setIsLoading(true);
+                const mockApiData = {
+                    name: "John Doe",
+                    email: "johndoe@example.com",
+                    phone: "+1234567890",
+                    bloodType: "O+",
+                    lastDonationDate: "2024-09-15",
+                    donationHistory: [
+                        {
+                            date: "2024-03-20",
+                            location: "Mansoura Emergency Hospital",
+                            status: "Completed",
+                        },
+                        {
+                            date: "2024-06-15",
+                            location: "Red Crescent Center",
+                            status: "Completed",
+                        },
+                        {
+                            date: "2024-09-10",
+                            location: "National Blood Bank",
+                            status: "Completed",
+                        },
+                    ],
+                    donorLevel: "Silver",
+                    points: 250,
+                };
+
+                const apiData = null; // Set to `mockApiData` for testing
+                setUserData(apiData || userData);
+                calculateNextDonation(apiData?.lastDonationDate || userData.lastDonationDate);
             } catch (err) {
                 console.error("Error fetching user data", err);
-                calculateNextDonation(userData.lastDonationDate);               // Use placeholder if API fails
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchUserData();
     }, []);
 
     const calculateNextDonation = (lastDate) => {
-        if (!lastDate) return setNextDonationDate("You can donate now!");
+        if (!lastDate) {
+            setNextDonationDate("You can donate now!");
+            setDaysUntilNextDonation(0);
+            return;
+        }
         const nextDate = new Date(lastDate);
-        nextDate.setMonth(nextDate.getMonth() + 3);                             // Assuming 3-month gap for donations
-        setNextDonationDate(nextDate.toLocaleDateString());
+        nextDate.setMonth(nextDate.getMonth() + 3);
+        const today = new Date();
+        const daysLeft = Math.ceil((nextDate - today) / (1000 * 3600 * 24));
+
+        setDaysUntilNextDonation(daysLeft);
+        setNextDonationDate(
+            daysLeft > 0
+                ? `Next donation in ${daysLeft} days.`
+                : "You can donate now!"
+        );
     };
 
+    const toggleNotifications = () => setShowNotifications(!showNotifications);
+
+    const handleMarkNotificationAsRead = (index) => {
+        const updatedNotifications = [...donorNotifications];
+        updatedNotifications[index].read = true;
+        setDonorNotifications(updatedNotifications);
+    };
+
+    const handleConfirmBooking = (bookingDetails) => {
+        alert(
+        `Your donation is booked on ${bookingDetails.date} at ${bookingDetails.hospital}`
+        );
+        setShowBookingModal(false);
+    };
+
+    if (isLoading) {
+        return <p className="text-center mt-10 text-lg">Loading...</p>;
+    }
+
+    if (!userData.name) {
+        return <p className="text-center mt-10 text-lg">Unable to load data.</p>;
+    }
+
     return (
-        <div className="min-h-screen bg-gray-100 p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold text-red-600">Welcome, {userData.name}!</h1>
+        <div className="min-h-screen bg-gray-50 p-6 mt-16 mb-48">
+        {/* Header */}
+        <div className="mb-8 flex justify-between items-center">
+            <h1 className="text-xl sm:text-3xl font-bold text-red-600">
+                Welcome, {userData.name}!
+            </h1>
+            
+            <div className="flex flex-row justify-between gap-10">
+                <div className="relative">
+                    <FaBell
+                        className="h-8 w-8 text-gray-600 cursor-pointer mt-3"
+                        onClick={toggleNotifications}
+                        aria-label="Notifications"
+                    />
+                    {donorNotifications.some((notif) => !notif.read) && (
+                        <span className="absolute top-3 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+                    )}
+                    {showNotifications && (
+                        <Notification
+                        notifications={donorNotifications}
+                        onMarkAsRead={handleMarkNotificationAsRead}
+                        onDismiss={() => setShowNotifications(false)}
+                        />
+                    )}
+
+                    
+                </div>
+
+                <img
+                    src={userData.avatar || "https://via.placeholder.com/100"}
+                    alt="Profile"
+                    className="w-16 h-16 sm:w-14 sm:h-14 rounded-full border-2 border-red-600"
+                />
+            </div>
+            
+        </div>
+
+        {/* Dashboard Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* User Info */}
+            <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 col-span-1">
+                <div className="flex items-center">
+                    <img
+                        src={userData.avatar || "https://via.placeholder.com/100"}
+                        alt="Profile"
+                        className="w-16 h-16 sm:w-24 sm:h-24 rounded-full border-2 border-red-600 hidden"
+                    />
+                    <div className="ml-4">
+                        <h2 className="text-lg sm:text-lg font-bold text-gray-700">{userData.name}</h2>
+                        <p className="text-md sm:text-sm text-gray-600 rounded border shadow-red-400 mt-5 p-3">Blood Type: {userData.bloodType}</p>
+                        <p className="text-md sm:text-sm text-gray-600 rounded border shadow-red-400 mt-5 p-3">Phone: {userData.phone}</p>
+                        <p className="text-md sm:text-sm text-gray-600 rounded border shadow-red-400 mt-5 p-3">Email: {userData.email}</p>
+                        <p className="text-md sm:text-sm text-gray-600 rounded border shadow-red-400 mt-5 p-3">
+                            Next Donation:{" "}
+                            <span className="font-bold text-red-600">
+                            {nextDonationDate || "Calculating..."}
+                            </span>
+                        </p>
+                    </div>
+                </div>
                 <button
-                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                    onClick={() => alert("Feature coming soon!")}
+                    className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition w-full "
+                    onClick={() => setShowBookingModal(true)}
                 >
-                    AI Insights
+                    Book a Donation
                 </button>
             </div>
 
-            {/* Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* User Info Card */}
-                <div className="bg-white shadow-md rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4 text-gray-700 text-center">Your Profile</h2>
-                    
-                    <div className="flex flex-row items-center text-start justify-between">
-                        <div>
-                            <h2 className="text-xl font-bold mb-2 text-gray-700">
-                                Welcome {userData.name}
-                            </h2>
-                            <p className="text-gray-600 border rounded-md p-2 mt-1">
-                                <strong>Email:</strong> {userData.email}
-                            </p>
-                            <p className="text-gray-600 border rounded-md p-2 mt-1">
-                                <strong>Phone:</strong> {userData.phone}
-                            </p>
-                            <p className="text-gray-600 border rounded-md p-2 mt-1">
-                                <strong>Blood Type:</strong> {userData.bloodType}
-                            </p>
-                            <p className="text-gray-600 border rounded-md p-2 mt-1">
-                                <strong>Next Eligible Donation:</strong> {nextDonationDate || "Calculating..."}
-                            </p>
-                        </div>
-                        <img
-                            src="https://via.placeholder.com/150"
-                            alt="Profile"
-                            className="w-32 h-32 rounded-full mb-4"
-                        />
-                    </div>
-                    
-                    
-                </div>
-
-                {/* Upcoming Donation Reminder */}
-                <div className="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between">
-                    <h2 className="text-xl font-bold mb-4 text-gray-700">Upcoming Donation</h2>
-                    <p className="text-gray-600">
-                        You are eligible to donate blood again on{" "}
-                        <span className="font-bold text-red-600">{nextDonationDate || "Calculating..."}</span>.
-                    </p>
-                    <button
-                        className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                        onClick={() => alert("Book your next donation!")}
-                    >
-                        Book Donation Slot
-                    </button>
-                </div>
-
-                {/* Donation History */}
-                <div className="bg-white shadow-md rounded-lg p-6 col-span-1 lg:col-span-2">
-                    <h2 className="text-xl font-bold mb-4 text-gray-700">Donation History</h2>
-                    {userData.donationHistory.length > 0 ? (
-                        <ul className="space-y-4">
-                            {userData.donationHistory.map((donation, index) => (
-                                <li key={index} className="flex justify-between items-center">
-                                    <div>
-                                        <p className="text-gray-700">
-                                            <strong>Date:</strong> {new Date(donation.date).toLocaleDateString()}
-                                        </p>
-                                        <p className="text-gray-500">
-                                            <strong>Location:</strong> {donation.location}
-                                        </p>
-                                    </div>
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-sm ${
-                                            donation.status === "Completed"
-                                                ? "bg-green-100 text-green-700"
-                                                : "bg-yellow-100 text-yellow-700"
-                                        }`}
-                                    >
-                                        {donation.status}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-500">No donation history available.</p>
-                    )}
-                </div>
-
-                {/* Placeholder for Future AI Features */}
-                <div className="bg-white shadow-md rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4 text-gray-700">Future Insights</h2>
-                    <p className="text-gray-600">
-                        Here, you'll see advanced analytics powered by AI, like blood compatibility,
-                        donor trends, and more!
-                    </p>
-                </div>
+            {/* Analytics */}
+            <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 col-span-2">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-4">
+                Donation Trends
+            </h2>
+            <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={donationStats}>
+                <Line
+                    type="monotone"
+                    dataKey="donations"
+                    stroke="#FF8042"
+                    strokeWidth={2}
+                />
+                <Tooltip />
+                </LineChart>
+            </ResponsiveContainer>
             </div>
+
+            {/* Donation Breakdown */}
+            <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 mt-6 col-span-1">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-4">
+                Donation Breakdown
+            </h2>
+            <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                <Pie
+                    dataKey="value"
+                    data={[
+                    { name: "O+", value: 50 },
+                    { name: "A+", value: 30 },
+                    { name: "B+", value: 15 },
+                    { name: "AB+", value: 5 },
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                >
+                    {COLORS.map((color, index) => (
+                    <Cell key={`cell-${index}`} fill={color} />
+                    ))}
+                </Pie>
+                <Tooltip />
+                </PieChart>
+            </ResponsiveContainer>
+            </div>
+
+            {/* Donation History */}
+            <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 mt-6 col-span-2">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-4">
+                Donation History
+            </h2>
+            <ul className="space-y-4">
+                {userData.donationHistory.map((donation, index) => (
+                <li
+                    key={index}
+                    className="flex justify-between items-center border-b pb-4"
+                >
+                    <div>
+                    <p className="text-sm sm:text-base text-gray-700 font-medium">
+                        Date: {donation.date}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                        Location: {donation.location}
+                    </p>
+                    </div>
+                    <span
+                    className={`px-3 py-1 rounded-full text-sm ${
+                        donation.status === "Completed"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                    >
+                    {donation.status}
+                    </span>
+                </li>
+                ))}
+            </ul>
+            </div>
+        </div>
+
+        {/* Booking Modal */}
+        {showBookingModal && (
+            <BookingModal
+            onClose={() => setShowBookingModal(false)}
+            onConfirm={handleConfirmBooking}
+            />
+        )}
+
+        
         </div>
     );
 };
