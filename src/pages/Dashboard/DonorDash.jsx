@@ -46,7 +46,7 @@ const DonorDashboard = () => {
         const fetchUserData = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:7070/api/auth/user", {
+            const response = await fetch("https://bfserver.vercel.app/api/auth/user", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${Cookies.get("token")}`,

@@ -37,7 +37,7 @@ const handleLoginSuccess = (user, token) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:7070/api/auth/login",
+        "https://bfserver.vercel.app/api/auth/login",
         { email, password },
         { withCredentials: true }
       );
