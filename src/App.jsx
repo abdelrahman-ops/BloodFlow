@@ -44,8 +44,8 @@ function App() {
                         <Route path="/events" element={<Events />} />
                         <Route path="/contact-us" element={<ContactUs />} />
                         
-                        <Route path="/donor/dashboard" element={<DonorDash />} />
-                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="/donor/dashboard/:id" element={<DonorDash />} />
+                        <Route path="/admin/dashboard/:id" element={<AdminDashboard />} />
 
                         <Route path="/login" element={<Login />}/>
                         <Route path='/register' element={<Register />}></Route>
