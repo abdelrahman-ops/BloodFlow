@@ -4,7 +4,7 @@ import { useLanguage } from '../hooks/LanguageContext.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 import assets from '../assets/assets.js';
 import { useAuth } from '../hooks/AuthContext.jsx';
-
+import { useData } from '../context/DataContext.jsx';
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +12,9 @@ const Navbar = () => {
     const { language, toggleLanguage } = useLanguage();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
-
+    const { data } = useData();
+    console.log( "navbar data :", data);
+    
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 20) {
@@ -56,7 +58,12 @@ const Navbar = () => {
 
     const handleLoginClick = () => {
         if(isAuthenticated){
-            navigate('/dashboard');
+            if (data.isAdmin) {
+                navigate(`/admin/dashboard/${data.id}`);
+            }
+            else{
+                navigate(`/donor/dashboard/${data.id}`);
+            }
         }
         else {
             setShowLoginPopup(true);
@@ -71,8 +78,7 @@ const Navbar = () => {
     const handleNavigation = (path) => {
         console.log("clicked" , isAuthenticated)
         if (isAuthenticated) {
-            // navigate(`/dashboard/${user.id}`);
-            navigate('/donor/dashboard');
+            navigate(path);
         } else {
             navigate(path);
         }
@@ -91,7 +97,7 @@ const Navbar = () => {
             >
                 <div className="flex justify-between items-center">
                     <Link to="/">
-                        <h1 className="text-xl md:text-2xl font-bold flex flex-row">
+                        <h1 className="text-2xl md:text-2xl font-bold flex flex-row">
                             BloodFlow
                         </h1>
                     </Link>
@@ -124,14 +130,14 @@ const Navbar = () => {
                             onClick={handleLoginClick}
                             className="text-white md:text-2xl"
                         >
-                            <img src={assets.icons.profile} alt="" className="h-10" />
+                            <img src={assets.icons.profile} alt="" className="h-9" />
                         </button>
 
                         <button
-                            className="text-white bg-[#0D1321] px-4 py-2 rounded-[1500px] hover:bg-gray-700"
+                            className="text-white bg-[#0D1321] px-4 py-2 rounded-[1500px] hover:bg-gray-700 text-sm h-9"
                             onClick={toggleLanguage}
                         >
-                            {language === "en" ? "عربي" : "English"}
+                            {language === "en" ? "ع" : "en"}
                         </button>
 
                         <button
@@ -140,7 +146,7 @@ const Navbar = () => {
                         >
                             <img
                                 src={`${isMenuOpen ? assets.icons.close : assets.icons.menu2}`}
-                                className="h-10"
+                                className="h-9"
                                 alt=""
                             />
                         </button>
@@ -149,19 +155,19 @@ const Navbar = () => {
 
                 {isMenuOpen && (
                     <div className="md:hidden mt-4 space-y-4 flex flex-col items-center bg-red-700 py-4 rounded-lg shadow-lg">
-                        <Link to="/about-us" className="hover:underline">
+                        <Link to="/about-us" className="hover:underline" onClick={()=> setIsMenuOpen(!isMenuOpen)}>
                             {labels[language].about}
                         </Link>
 
-                        <Link to="/events" className="hover:underline">
+                        <Link to="/events" className="hover:underline" onClick={()=> setIsMenuOpen(!isMenuOpen)}>
                             {labels[language].events}
                         </Link>
 
-                        <Link to="/contact-us" className="hover:underline">
+                        <Link to="/contact-us" className="hover:underline" onClick={()=> setIsMenuOpen(!isMenuOpen)}>
                             {labels[language].contact}
                         </Link>
 
-                        <a href="/#features" className="hover:underline">
+                        <a href="/#features" className="hover:underline" onClick={()=> setIsMenuOpen(!isMenuOpen)}>
                             {labels[language].features}
                         </a>
                     </div>

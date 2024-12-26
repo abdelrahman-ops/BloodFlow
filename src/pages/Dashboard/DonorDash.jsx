@@ -46,6 +46,7 @@ const DonorDashboard = () => {
         const fetchUserData = async () => {
         try {
             setIsLoading(true);
+            // https://bfserver.vercel.app/api/auth/user 
             const response = await fetch("https://bfserver.vercel.app/api/auth/user", {
                 method: "GET",
                 headers: {
@@ -126,7 +127,7 @@ const DonorDashboard = () => {
         <div className={`min-h-screen p-6 mt-16 mb-24 ${darkMode ? "bg-gray-900 text-white" : "bg-gradient-to-br from-red-50 to-gray-100 text-gray-800"}`}>
             {/* Header */}
             <div className="flex justify-between items-center mb-8 ">
-                <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-red-600 to-red-400 text-transparent bg-clip-text">
+                <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-red-600 to-red-400 text-transparent bg-clip-text p-2">
                     Welcome, {userData.name || "Donor"}!
                 </h1>
 
@@ -175,15 +176,18 @@ const DonorDashboard = () => {
                 {/* User Info */}
                 <div className="bg-white shadow-lg rounded-xl p-6 col-span-1">
                     <h2 className="text-lg font-bold text-gray-700 mb-4">Your Info</h2>
-                    <p className="text-gray-600">Blood Type: {userData?.bloodType || "Unknown"}</p>
-                    <p className="text-gray-600">Phone: {userData.phone}</p>
-                    <p className="text-gray-600">Email: {userData.email}</p>
+                    <p className="text-gray-600"><span className="font-semibold ">Blood Type:</span>  {userData?.bloodType || "Unknown"}</p>
+                    <p className="text-gray-600"><span className="font-semibold ">Phone:</span>         {userData.phone}</p>
+                    <p className="text-gray-600"><span className="font-semibold ">Email:</span>         {userData.email}</p>
+                    <p className="text-gray-600"><span className="font-semibold ">Donor Level:</span>   {userData.donorLevel}</p>
+                    <p className="text-gray-600"><span className="font-semibold ">Points:</span>        {userData.points}</p>
+                    
                     <p className="text-gray-600">
                         Next Donation:{" "}
                         <span className="font-bold text-red-600">{nextDonationDate}</span>
                     </p>
                     <button
-                        className="mt-11 w-full py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                        className="mt-3 w-full py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
                         onClick={() => setShowBookingModal(true)}
                     >
                         Book a Donation
@@ -195,7 +199,7 @@ const DonorDashboard = () => {
                     <h2 className="text-lg font-bold text-gray-700 mb-4">Your Blood Health</h2>
                     
                     {Object.entries(bloodHealthData).map(([key, value]) => (
-                        <p key={key} className="text-gray-600 capitalize">
+                        <p key={key} className="text-gray-600 capitalize m-1">
                         {key}: {value}
                         </p>
                     ))}
@@ -208,35 +212,6 @@ const DonorDashboard = () => {
                     </button>
                 </div>
                 
-                {/* Donation Breakdown */}
-                <div className="bg-white shadow-lg rounded-xl p-6">
-                    <h2 className="text-lg font-bold text-gray-700">Donation Breakdown</h2>
-                    <ResponsiveContainer width="100%" height={200}>
-                        <PieChart>
-                            <Pie
-                                dataKey="value"
-                                data={[
-                                    { name: "O+", value: 50 },
-                                    { name: "A+", value: 30 },
-                                    { name: "B+", value: 15 },
-                                    { name: "AB+", value: 5 },
-                                ]}
-                                cx="50%"
-                                cy="50%"
-                                outerRadius={80}
-                                label
-                            >
-                                {COLORS.map((color, index) => (
-                                <Cell key={`cell-${index}`} fill={color} />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </div>
-
-                
-
                 {/* Donation History */}
                 <div className="bg-white shadow-lg rounded-xl p-6 col-span-1">
                     <h2 className="text-lg font-bold text-gray-700 mb-4">
@@ -271,9 +246,9 @@ const DonorDashboard = () => {
                         )}
                     </ul>
                 </div>
-                
+
                 {/* Donation Trends */}
-                <div className="bg-white shadow-lg rounded-xl p-6 col-span-1 mt-6">
+                <div className="bg-white shadow-lg rounded-xl p-6 col-span-2 mt-6">
                     <h2 className="text-lg font-bold text-gray-700 mb-4">Donation Trends</h2>
                     <ResponsiveContainer width="100%" height={200}>
                     <LineChart data={chartData}>
@@ -282,6 +257,41 @@ const DonorDashboard = () => {
                     </LineChart>
                     </ResponsiveContainer>
                 </div>
+
+                
+                
+                {/* Donation Breakdown */}
+                <div className="bg-white shadow-lg rounded-xl p-6">
+                    <h2 className="text-lg font-bold text-gray-700">Donation Breakdown</h2>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                            <Pie
+                                dataKey="value"
+                                data={[
+                                    { name: "O+", value: 50 },
+                                    { name: "A+", value: 30 },
+                                    { name: "B+", value: 15 },
+                                    { name: "AB+", value: 5 },
+                                ]}
+                                cx="50%"
+                                cy="50%"
+                                outerRadius={80}
+                                label
+                            >
+                                {COLORS.map((color, index) => (
+                                <Cell key={`cell-${index}`} fill={color} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+
+                
+
+                
+                
+                
             </div>
             
             {/* Booking Modal */}

@@ -19,8 +19,10 @@ import ScrollToTop from './components/ScrollToTop';
 import { AuthProvider } from './hooks/AuthContext';
 import { LanguageProvider } from './hooks/LanguageContext';
 
+
 import './App.css';
 import AdminDashboard from './pages/Dashboard/AdminDash';
+import { DataProvider } from './context/DataContext';
 
 
 
@@ -32,6 +34,7 @@ function App() {
     return (
         <div className='bg-gray-100'>
             <AuthProvider>
+            <DataProvider>
             <LanguageProvider>
                 <Router>
                     <Navbar />
@@ -54,8 +57,9 @@ function App() {
                     <ScrollToTop />
                 </Router>
             
-        </LanguageProvider>
-        </AuthProvider>
+            </LanguageProvider>
+            </DataProvider>
+            </AuthProvider>
         </div>
     );
 }

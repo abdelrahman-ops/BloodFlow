@@ -42,8 +42,8 @@ const Register = () => {
 
         try {
             const apiUrl = userType === "admin"
-                ? "https://server-e-commerce-seven.vercel.app/api/admins/register"
-                : "https://server-e-commerce-seven.vercel.app/api/donors/register";
+                ? "https://bfserver.vercel.app/api/auth/register"
+                : "https://bfserver.vercel.app/api/auth/register";
 
             const payload = userType === "admin"
                 ? {
