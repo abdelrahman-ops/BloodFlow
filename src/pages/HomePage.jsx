@@ -1,7 +1,4 @@
 import Hero from "../components/Hero.jsx";
-import Search from "../components/Search.jsx";
-import Stats from "../components/Stats.jsx";
-import Join from "../components/Join.jsx";
 import Features from '../components/Features.jsx'
 import Awarness from "../components/Awarness.jsx";
 
@@ -10,11 +7,11 @@ const HomePage = () => {
         <>
             <div className="font-sans">
                 <Hero />
-                <Search />
-                <Stats />
+                {/* <Search />
+                <Stats /> */}
                 <Features />
                 <Awarness />
-                <Join />
+                {/* <Join /> */}
             </div>
         </>
         

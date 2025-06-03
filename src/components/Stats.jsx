@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useLanguage } from "../hooks/LanguageContext";
+import { motion } from "framer-motion";
 
 const Stats = () => {
     const { language } = useLanguage();
@@ -10,19 +11,17 @@ const Stats = () => {
         en: {
             statsTitle: "Our Impact in Numbers",
             stats: [
-                { label: "Donors", value: 10234, target: 15000 },
-                { label: "Requests Fulfilled", value: 8451, target: 10000 },
-                { label: "Lives Saved", value: 15893, target: 20000 },
-                { label: "Volunteers", value: 5678, target: 8000 },
+                { label: "Donors", value: 12542, target: 20000 },
+                { label: "Requests Fulfilled", value: 32156, target: 40000 },
+                { label: "Lives Saved", value: 247, target: 500 },
             ],
         },
         ar: {
             statsTitle: "تأثيرنا بالأرقام",
             stats: [
-                { label: "المتبرعين", value: 10234, target: 15000 },
-                { label: "الطلبات المُلباة", value: 8451, target: 10000 },
-                { label: "الأرواح المُنقذة", value: 15893, target: 20000 },
-                { label: "المتطوعين", value: 5678, target: 8000 },
+                { label: "المتبرعين", value: 12542, target: 20000 },
+                { label: "الطلبات المُلباة", value: 32156, target: 40000 },
+                { label: "الأرواح المُنقذة", value: 247, target: 500 },
             ],
         },
     };
@@ -52,48 +51,46 @@ const Stats = () => {
     }, [content.stats]);
 
     return (
-        <section className="pb-4">
-            <div className="container mx-auto text-center">
-                {/* <h2 className="text-center text-2xl sm:text-4xl font-bold text-gray-800 mb-3">
-                    {content.statsTitle}
-                </h2> */}
-                <div className="mt-6 flex flex-wrap justify-center gap-4">
-                    
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center my-6">
-                    {content.stats.map((stat, index) => (
-                        <div
-                            key={index}
-                            className="flex flex-col items-center p-0 rounded-lg transform transition duration-300 hover:scale-105 blood"
-                        >
-                            <div className="w-24 h-24 sm:w-28 sm:h-28 mb-2">
-                                <CircularProgressbar
-                                    value={progressValues[index]}
-                                    text={`${progressValues[index]}%`}
-                                    styles={buildStyles({
-                                        pathColor: `rgba(220, 38, 38, ${progressValues[index] / 100})`,
-                                        textColor: "#DC2626",
-                                        trailColor: "#E5E7EB",
-                                        textSize: "16px",
-										fontSize:"20rem"
-                                    })}
-                                />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <p className="text-md sm:text-lg font-bold text-gray-800">
-                                        {stat.value.toLocaleString()}
-                                    </p>
-                                    {/* <p className="text-xs sm:text-sm text-gray-500">
-                                        / {stat.target.toLocaleString()}
-                                    </p> */}
+        <section className="py-12">
+            <div className="container mx-auto px-4">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.9 }}
+                    className="w-full max-w-6xl mx-auto"
+                >
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        {content.stats.map((stat, index) => (
+                            <motion.div
+                                key={index}
+                                whileHover={{ scale: 1.03 }}
+                                className="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20 text-center hover:bg-white/20 transition-all duration-300"
+                            >
+                                <div className="flex flex-col items-center">
+                                    <div className="w-32 h-32 mb-4">
+                                        <CircularProgressbar
+                                            value={progressValues[index]}
+                                            text={`${stat.value.toLocaleString()}+`}
+                                            styles={buildStyles({
+                                                pathColor: `rgba(220, 38, 38, ${progressValues[index] / 100})`,
+                                                textColor: "#fff",
+                                                trailColor: "rgba(255, 255, 255, 0.2)",
+                                                textSize: "16px",
+                                                pathTransitionDuration: 0.5,
+                                            })}
+                                        />
+                                    </div>
+                                    <div className="text-2xl font-bold text-white mb-2">
+                                        {stat.value.toLocaleString()}+
+                                    </div>
+                                    <div className="text-lg font-medium text-white/90">
+                                        {stat.label}
+                                    </div>
                                 </div>
-                            </div>
-                            <p className="mt-4 text-lg font-medium text-gray-600">
-                                {stat.label}
-                            </p>
-                        </div>
-                    ))}
+                            </motion.div>
+                        ))}
                     </div>
-                </div>
-				
+                </motion.div>
             </div>
         </section>
     );
