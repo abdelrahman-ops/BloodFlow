@@ -1,129 +1,206 @@
-/* eslint-disable react/no-unescaped-entities */
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/AuthContext";
-import Cookies from "js-cookie";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FiEye, FiEyeOff, FiLock, FiMail, FiArrowRight } from "react-icons/fi";
+import { motion } from "framer-motion";
+import useAuthStore from "../stores/authStore";
+import { useLanguageStore } from "../stores/languageStore";
+import { toast } from "react-toastify";
 
 const Login = () => {
-    const { login } = useAuth();
+    const { login, loading: authLoading, error: authError, clearError } = useAuthStore();
+    const { language } = useLanguageStore();
     const navigate = useNavigate();
-
+    const location = useLocation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const redirectTo = location.state?.from || "/";
 
-const handleLoginSuccess = (user, token) => {
-    Cookies.set("token", token, { secure: true, sameSite: "Strict" });
-    // Cookies.set("token", token);
+    const translations = {
+        en: {
+            title: "Welcome Back",
+            subtitle: "Sign in to continue to BloodFlow",
+            email: "Email Address",
+            password: "Password",
+            login: "Login",
+            noAccount: "Don't have an account?",
+            signUp: "Sign up",
+            forgotPassword: "Forgot password?",
+            loading: "Authenticating...",
+            errorTitle: "Login Failed",
+            loginSuccess: "Login successful!"
+        },
+        ar: {
+            title: "مرحباً بعودتك",
+            subtitle: "سجل الدخول للمتابعة إلى BloodFlow",
+            email: "البريد الإلكتروني",
+            password: "كلمة المرور",
+            login: "تسجيل الدخول",
+            noAccount: "ليس لديك حساب؟",
+            signUp: "إنشاء حساب",
+            forgotPassword: "نسيت كلمة المرور؟",
+            loading: "جاري المصادقة...",
+            errorTitle: "فشل تسجيل الدخول",
+            loginSuccess: "تم تسجيل الدخول بنجاح!"
+        }
+    };
 
-    // Call login to update the AuthContext
-    login(user);
-    console.log("user id" , user.id);
+    const t = translations[language];
 
-    // Redirect the user based on their role
-    if (user.isAdmin) {
-        navigate(`/admin/dashboard/${user.id}`);
-    } else {
-        navigate(`/donor/dashboard/${user.id}`);
-    }
-};
+    // Handle auth errors from the store
+    useEffect(() => {
+        if (authError) {
+            toast.error(authError);
+            clearError();
+        }
+    }, [authError, clearError]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        
+        try {
+            await login({ email, password });
+            
+            // Get the user data from the store after successful login
+            const { user } = useAuthStore.getState();
+            
+            if (user) {
+                toast.success(t.loginSuccess);
+                
+                if (user.role === "admin") {
+                    navigate(`/admin/dashboard/${user.id}`);
+                } else if (redirectTo && redirectTo !== "/login") {
+                    navigate(redirectTo);
+                } else {
+                    navigate(`/dashboard/${user.id}`);
+                }
+            }
+        } catch (error) {
+            // Error is already handled by the store
+            console.error("Login error:", error);
+        }
+    };
 
-    try {
-      const response = await axios.post(
-        "https://bfserver.vercel.app/api/auth/login",
-        { email, password },
-        { withCredentials: true }
-      );
-      console.log("Backend Response:", response.data);
-       
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center p-4 mt-10">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="w-full max-w-md"
+            >
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-red-600 p-6 text-center">
+                        <div className="bg-white p-3 rounded-full inline-flex items-center justify-center mb-4">
+                            <FiLock className="text-red-600 text-2xl" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-white">{t.title}</h2>
+                        <p className="text-red-100 mt-1">{t.subtitle}</p>
+                    </div>
 
-      const { user, token } = response.data;
-      console.log(user, "user");
-      console.log(token, "token");
-      
-      
+                    {/* Form */}
+                    <div className="p-6 md:p-8">
+                        <form onSubmit={handleLogin} className="space-y-5">
+                            {/* Email Field */}
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t.email}
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <FiMail className="text-gray-400" />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                                        placeholder={language === 'en' ? "example@email.com" : "example@email.com"}
+                                    />
+                                </div>
+                            </div>
 
-      if (token && user) {
-        handleLoginSuccess(user, token);
-      } else {
-        setError("Invalid response from server");
-      }
-    } catch (err) {
-        console.error(err.response);
-      setError(err.response?.data?.message || "Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+                            {/* Password Field */}
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t.password}
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <FiLock className="text-gray-400" />
+                                    </div>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-red-600 transition-colors"
+                                    >
+                                        {showPassword ? <FiEyeOff /> : <FiEye />}
+                                    </button>
+                                </div>
+                                <div className="mt-2 text-right">
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate("/forgot-password")}
+                                        className="text-sm text-red-600 hover:underline"
+                                    >
+                                        {t.forgotPassword}
+                                    </button>
+                                </div>
+                            </div>
 
-  return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Login</h2>
-                {error && (
-                <div className="bg-red-100 text-red-700 border border-red-400 rounded p-4 mb-4">
-                    {error}
+                            {/* Submit Button */}
+                            <div className="pt-2">
+                                <button
+                                    type="submit"
+                                    disabled={authLoading}
+                                    className={`w-full flex items-center justify-center py-3 px-4 rounded-lg shadow-md transition-all duration-300 font-medium ${
+                                        authLoading
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white transform hover:scale-[1.01]'
+                                    }`}
+                                >
+                                    {authLoading ? (
+                                        <>
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            {t.loading}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {t.login} <FiArrowRight className="ml-2" />
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Sign Up Link */}
+                        <div className="mt-6 text-center text-sm">
+                            <span className="text-gray-600">{t.noAccount} </span>
+                            <button
+                                onClick={() => navigate("/register?role=generalUser", { state: { from: redirectTo } })}
+                                className="text-red-600 font-medium hover:underline"
+                            >
+                                {t.signUp}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                )}
-                <form onSubmit={handleLogin}>
-                <div className="mb-4">
-                    <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                    Email Address
-                    </label>
-                    <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                    placeholder="Enter your email"
-                    />
-                </div>
-
-                <div className="mb-6">
-                    <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-                    Password
-                    </label>
-                    <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                    placeholder="Enter your password"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition ${
-                    isLoading ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                >
-                    {isLoading ? "Logging in..." : "Login"}
-                </button>
-                </form>
-
-                <div className="text-center mt-6 text-gray-500">
-                Don't have an account?{" "}
-                <button
-                    onClick={() => navigate("/register", { state: { showSignUp: true } })}
-                    className="text-red-600 hover:underline"
-                >
-                    Sign up
-                </button>
-                </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

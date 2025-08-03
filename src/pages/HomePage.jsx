@@ -1,6 +1,6 @@
-import Hero from "../components/Hero.jsx";
-import Features from '../components/Features.jsx'
-import Awarness from "../components/Awarness.jsx";
+import Hero from "../components/hero/Hero.jsx";
+import Features from '../components/home/Features.jsx'
+import Awarness from "../components/home/Awarness.jsx";
 
 const HomePage = () => {
     return (

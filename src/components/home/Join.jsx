@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useLanguage } from "../hooks/LanguageContext";
-import UserType from "./UserType";
-import assets from '../assets/assets.js';
+
+import UserType from "../UserType.jsx";
+import assets from '../../assets/assets.js';
+import { useLanguageStore } from "../../stores/languageStore.js";
 
 const Join = () => {
     const [showPopup, setShowPopup] = useState(false);
-    const { language } = useLanguage();
+    const { language } = useLanguageStore();
 
     const textContent = {
         en: {

@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { IoResizeSharp, IoWaterOutline, IoPulse, IoPeople, IoHeartOutline } from "react-icons/io5";
-import { useLanguage } from "../hooks/LanguageContext";
-import assets from '../assets/assets.js';
+import assets from '../../assets/assets.js';
+import { useLanguageStore } from "../../stores/languageStore.ts";
 
 function Features() {
-    const { language } = useLanguage();
+    const { language } = useLanguageStore();
 
     const labels = {
         en: {

@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import { useLanguage } from "../hooks/LanguageContext";
+
+import { useLanguageStore } from "../stores/languageStore";
 
 const UserType = ({ closePopup, onSelection }) => {
-    const { language } = useLanguage();
+    const { language } = useLanguageStore();
 
     const textContent = {
         en: {

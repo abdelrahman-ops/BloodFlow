@@ -2,11 +2,11 @@
 import { Link } from 'react-router-dom'
 import assets from '../assets/assets'
 import { motion } from 'framer-motion';
-import { useLanguage } from '../hooks/LanguageContext';
+import { useLanguageStore } from '../stores/languageStore';
 
 const BloodDrop = () => {
 
-    const { language } = useLanguage();
+    const { language } = useLanguageStore();
 
     const labels = {
         en: {

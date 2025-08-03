@@ -1,32 +1,37 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '../hooks/LanguageContext.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHeartbeat, FaUser, FaLanguage, FaTint, FaTimes, FaBars } from 'react-icons/fa';
 import { RiNotification2Fill } from "react-icons/ri";
 import { PiDropFill } from "react-icons/pi";
-import { useAuth } from '../hooks/AuthContext.jsx';
-import { useData } from '../context/DataContext.jsx';
+import useAuthStore from '../../stores/authStore.ts';
+import { useLanguageStore } from '../../stores/languageStore.ts';
+import Notification from '../donorDashboard/Notifications/Notification.jsx';
+import { useDonorDashboard } from '../../controller/donorDashboardController.ts';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
+    const {
+        notifications,
+        toggleNotifications,
+        handleMarkNotificationAsRead,
+    } = useDonorDashboard();
+
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
-    const [showNotification, setShowNotification] = useState(false);
-    const { language, toggleLanguage } = useLanguage();
-    const { isAuthenticated, logout } = useAuth();
-    const navigate = useNavigate();
-    const { data } = useData();
-    
-    // const notificationsCount = data.notifications.length();
-    // console.log(notificationsCount);
-    console.log('data is: ', data);
-    
-    
-
-    // Blood drop animation state
     const [drops, setDrops] = useState([]);
+    const [showNotification, setShowNotification] = useState(false);
+
+    const { language, toggleLanguage } = useLanguageStore();
+    const {isAuthenticated , logout , user} = useAuthStore();
     
+    const navigate = useNavigate();
+    
+    const handleNotificationRead = async (id) => {
+        const { message } = await handleMarkNotificationAsRead(id);
+        toast.success(message);
+    };
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -95,9 +100,9 @@ const Navbar = () => {
 
     const handleLoginClick = () => {
         if(isAuthenticated) {
-            const path = data?.isAdmin 
-                ? `/admin/dashboard/${data.id}` 
-                : `/donor/dashboard/${data.id}`;
+            const path = user?.isAdmin 
+                ? `/admin/dashboard/${user.id}` 
+                : `/donor/dashboard/me`;
             navigate(path);
         } else {
             setShowLoginPopup(true);
@@ -187,92 +192,34 @@ const Navbar = () => {
                             {isAuthenticated && (
                                 <div className="relative">
                                     <button 
-                                        onClick={() => setShowNotification(!showNotification)}
+                                        onClick={() => {
+                                            setShowNotification(!showNotification);
+                                            if (!showNotification) {
+                                                toggleNotifications(); // Fetch notifications if needed
+                                            }
+                                        }}
                                         className="p-2 rounded-full hover:bg-red-800 transition-colors relative"
                                     >
                                         <RiNotification2Fill className="text-xl" />
-                                        {data?.notifications?.length > 0 && (
+                                        {notifications?.notifications?.filter(n => !n.read).length > 0 && (
                                             <span className="absolute top-0 right-0 bg-yellow-400 text-red-700 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                {data.notifications.length}
+                                                {notifications.notifications.filter(n => !n.read).length}
                                             </span>
                                         )}
                                     </button>
 
                                     <AnimatePresence>
-                                        {showNotification && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: -20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -20 }}
-                                                className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 overflow-hidden"
-                                            >
-                                                <div className="p-4 border-b">
-                                                    <h3 className="font-bold text-gray-800 flex items-center">
-                                                        <RiNotification2Fill className="mr-2 text-red-600" />
-                                                            {labels[language].notifications}
-                                                            {data?.notifications?.length > 0 && (
-                                                                <span className="ml-auto bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
-                                                                    {data.notifications.length} {language === 'en' ? 'new' : 'جديد'}
-                                                                </span>
-                                                            )}
-                                                    </h3>
-                                                </div>
-                                                <div className="divide-y max-h-96 overflow-y-auto">
-                                                    {data?.notifications?.length > 0 ? (
-                                                        data.notifications.map((notification, index) => (
-                                                            <div 
-                                                                key={index} 
-                                                                className={`p-4 hover:bg-red-50 cursor-pointer ${
-                                                                    notification.urgent ? 'bg-red-50 border-l-4 border-red-500' : ''
-                                                                }`}
-                                                                onClick={() => {
-                                                                    setShowNotification(false);
-                                                                }}
-                                                            >
-                                                                <div className="flex justify-between items-start">
-                                                                    <span className={`font-medium ${
-                                                                        notification.urgent ? 'text-red-600' : 'text-gray-800'
-                                                                    }`}>
-                                                                        {notification.title || 
-                                                                        (notification.urgent ? labels[language].urgent : labels[language].all)}
-                                                                    </span>
-                                                                    <span className="text-xs text-gray-500">
-                                                                        {new Date(notification.timestamp).toLocaleTimeString([], {
-                                                                            hour: '2-digit',
-                                                                            minute: '2-digit'
-                                                                        })}
-                                                                    </span>
-                                                                </div>
-                                                                <p className="text-sm mt-1 text-gray-600">
-                                                                    {notification.message}
-                                                                </p>
-                                                                {notification.bloodType && (
-                                                                    <span className="inline-block mt-2 px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">
-                                                                        {notification.bloodType}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        ))
-                                                    ) : (
-                                                        <div className="p-6 text-center text-gray-500">
-                                                            <RiNotification2Fill className="mx-auto text-3xl text-gray-300 mb-2" />
-                                                            <p>{language === 'en' ? 'No new notifications' : 'لا توجد إشعارات جديدة'}</p>
-                                                        </div>
-                                                    )}          
-                                                </div>
-                                                {data?.notifications?.length > 0 && (
-                                                    <div className="p-3 bg-gray-50 text-center border-t">
-                                                        <Link 
-                                                            to="/notifications" 
-                                                            className="text-sm text-red-600 hover:underline font-medium"
-                                                            onClick={() => setShowNotification(false)}
-                                                        >
-                                                            {language === 'en' ? 'View all notifications' : 'عرض جميع الإشعارات'}
-                                                        </Link>
-                                                    </div>
-                                                )}
-                                            </motion.div>
-                                        )}
+                                        {
+                                            showNotification &&  (
+                                            <Notification
+                                                notifications={notifications?.notifications || []}
+                                                onMarkAsRead={handleNotificationRead}
+                                                onDismiss={() => setShowNotification(false)}
+                                                onClose={() => setShowNotification(false)}
+                                            />
+                                            )
+                                        }
+                                        
                                     </AnimatePresence>
                                 </div>
                             )}
@@ -283,7 +230,7 @@ const Navbar = () => {
                             >
                                 <FaUser className="text-xl" />
                                 {isAuthenticated && (
-                                    <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-400 rounded-full border-2 border-red-700"></div>
+                                    <div className="absolute bottom-1 right-1 h-3 w-3 bg-green-400 rounded-full border-2 border-red-700"></div>
                                 )}
                                 <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                     {isAuthenticated ? labels[language].dashboard : labels[language].login}
@@ -299,7 +246,7 @@ const Navbar = () => {
                             </button>
 
                             <Link 
-                                to="/donate" 
+                                to="/register" 
                                 className="hidden md:flex items-center bg-white text-red-600 px-4 py-2 rounded-full font-bold hover:bg-red-100 transition-colors"
                             >
                                 <PiDropFill className="mr-2 animate-pulse" />
@@ -370,9 +317,9 @@ const Navbar = () => {
                                     {isAuthenticated ? (
                                         <>
                                             <Link 
-                                                to={data?.isAdmin 
-                                                    ? `/admin/dashboard/${data.id}` 
-                                                    : `/donor/dashboard/${data.id}`}
+                                                to={user?.isAdmin 
+                                                    ? `/admin/dashboard/${user.id}` 
+                                                    : `/donor/dashboard/${user.id}`}
                                                 className="block bg-white text-red-600 font-bold py-2 px-4 rounded-lg text-center mt-4 hover:bg-red-100 transition-colors"
                                                 onClick={() => setIsMenuOpen(false)}
                                             >
@@ -389,7 +336,7 @@ const Navbar = () => {
                                     ) : (
                                         <>
                                             <Link 
-                                                to="/donate" 
+                                                to="/register" 
                                                 className="block bg-white text-red-600 font-bold py-2 px-4 rounded-lg text-center mt-4 hover:bg-red-100 transition-colors"
                                                 onClick={() => setIsMenuOpen(false)}
                                             >

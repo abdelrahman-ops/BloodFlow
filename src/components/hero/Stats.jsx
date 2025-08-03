@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useLanguage } from "../hooks/LanguageContext";
 import { motion } from "framer-motion";
+import { useLanguageStore } from "../../stores/languageStore";
 
 const Stats = () => {
-    const { language } = useLanguage();
+    const { language } = useLanguageStore();
 
     const textContent = {
         en: {

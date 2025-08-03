@@ -1,365 +1,208 @@
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import assets from "../assets/assets";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import DonorRegister from "../components/register/DonorRegister";
+import GeneralUserRegister from "../components/register/GeneralUserRegister";
+import { useLanguageStore } from "../stores/languageStore";
+import { FiDroplet, FiUser, FiArrowRight } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Register = () => {
+    const location = useLocation();
     const navigate = useNavigate();
+    const { language } = useLanguageStore();
 
-    const [userType, setUserType] = useState("donor"); // Default to donor
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        bloodType: "", // For donor
-        age: "", // For donor
-        gender: "", // For donor
-        phone: "", // For donor
-        hospitalName: "", // For admin
-        hospitalLocation: "", // For admin
-        contactNumber: "", // For admin
-    });
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [role, setRole] = useState(null);
+    const [showRoleSelection, setShowRoleSelection] = useState(true);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+    const t = {
+        en: {
+            title: "Join BloodFlow Community",
+            donor: "I Want to Donate",
+            generalUser: "I Need Blood",
+            registerAs: "Register as",
+            donorDescription: "Join our network of lifesavers. Your donation can save up to 3 lives.",
+            userDescription: "Find compatible donors in your area when you need blood.",
+            donorBenefits: [
+                "Help save lives in your community",
+                "Get health checkups with each donation",
+                "Receive notifications for urgent cases"
+            ],
+            recipientBenefits: [
+                "Quick access to compatible donors",
+                "Emergency request system",
+                "Real-time donor matching"
+            ],
+            selectRole: "Select your role to continue",
+            continue: "Continue"
+        },
+        ar: {
+            title: "انضم إلى مجتمع BloodFlow",
+            donor: "أريد التبرع",
+            generalUser: "أحتاج إلى دم",
+            registerAs: "سجل كـ",
+            donorDescription: "انضم إلى شبكة منقذي الأرواح. تبرعك يمكن أن ينقذ حياة 3 أشخاص.",
+            userDescription: "ابحث عن متبرعين متوافقين في منطقتك عندما تحتاج إلى دم.",
+            donorBenefits: [
+                "ساعد في إنقاذ الأرواح في مجتمعك",
+                "احصل على فحوصات صحية مع كل تبرع",
+                "تلقي إشعارات للحالات الطارئة"
+            ],
+            recipientBenefits: [
+                "وصول سريع إلى المتبرعين المتوافقين",
+                "نظام طلب طوارئ",
+                "تطابق فوري مع المتبرعين"
+            ],
+            selectRole: "اختر دورك للمتابعة",
+            continue: "متابعة"
+        }
+    }[language];
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const roleParam = params.get("role");
+
+        if (roleParam && ["donor", "generalUser"].includes(roleParam)) {
+            setRole(roleParam);
+            setShowRoleSelection(false);
+        } else {
+            setShowRoleSelection(true);
+        }
+    }, [location]);
+
+    const handleRoleSelect = (selectedRole) => {
+        setRole(selectedRole);
+        navigate(`/register?role=${selectedRole}`, { replace: true });
+        setShowRoleSelection(false);
     };
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        setError("");
-        setIsLoading(true);
-
-        // Validate password and confirm password match
-        if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match.");
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const apiUrl = userType === "admin"
-                ? "https://bfserver.vercel.app/api/auth/register"
-                : "https://bfserver.vercel.app/api/auth/register";
-
-            const payload = userType === "admin"
-                ? {
-                        name: formData.name,
-                        email: formData.email,
-                        password: formData.password,
-                        hospitalName: formData.hospitalName,
-                        hospitalLocation: formData.hospitalLocation,
-                        contactNumber: formData.contactNumber,
-                }
-                : {
-                        name: formData.name,
-                        email: formData.email,
-                        password: formData.password,
-                        bloodType: formData.bloodType,
-                        age: formData.age,
-                        gender: formData.gender,
-                        phone: formData.phone,
-                };
-
-            const response = await axios.post(apiUrl, payload);
-
-            if (response.status === 201) {
-                navigate("/login"); // Redirect to login after successful registration
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || "Registration failed. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleLoginRedirect = () => {
-        // if (userType === "admin") {
-        //     navigate("/hospital/login");
-        // } else {
-        //     navigate("/user/login");
-        // }
-        navigate('/login')
+    const handleBackToSelection = () => {
+        setShowRoleSelection(true);
+        navigate("/register", { replace: true });
     };
 
     return (
-        <div 
-            className="flex items-center justify-center min-h-screen bg-gray-100 mt-14"
-            style={{
-                backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.9), 
-                rgba(0, 0, 0, 0)),url('${assets.images.hdonor}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-            }}
-        >
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-4xl">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-red-600">
-                        {userType === "admin" ? "Admin Registration" : "Donor Registration"}
-                    </h2>
-                    <div className="flex">
-                        <button
-                            onClick={() => setUserType("donor")}
-                            className={`px-4 py-2 rounded-l-lg ${
-                                userType === "donor"
-                                    ? "bg-red-600 text-white"
-                                    : "bg-gray-200 text-gray-700"
-                            }`}
-                        >
-                            Donor
-                        </button>
-                        <button
-                            onClick={() => setUserType("admin")}
-                            className={`px-4 py-2 rounded-r-lg ${
-                                userType === "admin"
-                                    ? "bg-red-600 text-white"
-                                    : "bg-gray-200 text-gray-700"
-                            }`}
-                        >
-                            Admin
-                        </button>
-                    </div>
-                </div>
-
-                {error && (
-                    <div className="bg-red-100 text-red-700 border border-red-400 rounded p-4 mb-4">
-                        {error}
-                    </div>
-                )}
-
-                <div className="flex gap-8 flex-wrap">
-                    <form onSubmit={handleRegister} className="flex-grow">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
-                                    Full Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                    placeholder="Enter your full name"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                    placeholder="Enter your password"
-                                />
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="confirmPassword"
-                                    className="block text-gray-700 font-medium mb-2"
-                                >
-                                    Confirm Password
-                                </label>
-                                <input
-                                    type="password"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                    placeholder="Confirm your password"
-                                />
-                            </div>
-
-                            {userType === "donor" && (
-                                <>
-                                    <div>
-                                        <label htmlFor="bloodType" className="block text-gray-700 font-medium mb-2">
-                                            Blood Type
-                                        </label>
-                                        <select
-                                            id="bloodType"
-                                            name="bloodType"
-                                            value={formData.bloodType}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                        >
-                                            <option value="">Select your blood type</option>
-                                            <option value="A+">A+</option>
-                                            <option value="A-">A-</option>
-                                            <option value="B+">B+</option>
-                                            <option value="B-">B-</option>
-                                            <option value="O+">O+</option>
-                                            <option value="O-">O-</option>
-                                            <option value="AB+">AB+</option>
-                                            <option value="AB-">AB-</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="age" className="block text-gray-700 font-medium mb-2">
-                                            Age
-                                        </label>
-                                        <input
-                                            type="number"
-                                            id="age"
-                                            name="age"
-                                            value={formData.age}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                            placeholder="Enter your age"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="gender" className="block text-gray-700 font-medium mb-2">
-                                            Gender
-                                        </label>
-                                        <select
-                                            id="gender"
-                                            name="gender"
-                                            value={formData.gender}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                        >
-                                            <option value="">Select your gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">
-                                            Phone Number
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            id="phone"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                            placeholder="Enter your phone number"
-                                        />
-                                    </div>
-                                </>
-                            )}
-
-                            {userType === "admin" && (
-                                <>
-                                    <div>
-                                        <label
-                                            htmlFor="hospitalName"
-                                            className="block text-gray-700 font-medium mb-2"
-                                        >
-                                            Hospital Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="hospitalName"
-                                            name="hospitalName"
-                                            value={formData.hospitalName}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                            placeholder="Enter hospital name"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            htmlFor="hospitalLocation"
-                                            className="block text-gray-700 font-medium mb-2"
-                                        >
-                                            Hospital Location
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="hospitalLocation"
-                                            name="hospitalLocation"
-                                            value={formData.hospitalLocation}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                            placeholder="Enter hospital location"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            htmlFor="contactNumber"
-                                            className="block text-gray-700 font-medium mb-2"
-                                        >
-                                            Contact Number
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            id="contactNumber"
-                                            name="contactNumber"
-                                            value={formData.contactNumber}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-red-500 focus:border-red-500"
-                                            placeholder="Enter contact number"
-                                        />
-                                    </div>
-                                </>
-                            )}
-                        </div>
-
-                        <div className="mt-6 flex justify-between">
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className={`bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition ${
-                                    isLoading ? "opacity-50 cursor-not-allowed" : ""
-                                }`}
+        <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center p-4 py-8 md:py-12 mt-10">
+            <div className="w-full max-w-4xl mx-4">
+                <motion.div 
+                    className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                >
+                    <AnimatePresence mode="wait">
+                        {showRoleSelection ? (
+                            <motion.div
+                                key="role-selection"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="p-6 md:p-8"
                             >
-                                {isLoading ? "Registering..." : "Register"}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleLoginRedirect}
-                                className="text-red-600 hover:underline"
+                                {/* Header */}
+                                <div className="p-6 text-center border-b border-gray-100">
+                                    <h1 className="text-2xl md:text-3xl font-bold text-red-600">{t.title}</h1>
+                                    {showRoleSelection && (
+                                        <p className="text-gray-600 mt-2">{t.selectRole}</p>
+                                    )}
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Donor Option */}
+                                    <motion.div 
+                                        whileHover={{ y: -5 }}
+                                        className="border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-red-200 hover:bg-red-50 transition-all"
+                                        onClick={() => handleRoleSelect("donor")}
+                                    >
+                                        <div className="flex items-center mb-4">
+                                            <div className="bg-red-100 p-3 rounded-full mr-4">
+                                                <FiDroplet className="text-red-600 text-xl" />
+                                            </div>
+                                            <h3 className="text-lg font-medium text-gray-800">{t.donor}</h3>
+                                        </div>
+                                        <p className="text-gray-600 mb-4">{t.donorDescription}</p>
+                                        <ul className="space-y-2 text-sm text-gray-600">
+                                            {t.donorBenefits.map((benefit, index) => (
+                                                <li key={index} className="flex items-start">
+                                                    <span className="text-red-500 mr-2">•</span>
+                                                    {benefit}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <div className="mt-6 flex justify-end">
+                                            <button className="flex items-center text-red-600 font-medium">
+                                                {t.continue} <FiArrowRight className="ml-2" />
+                                            </button>
+                                        </div>
+                                    </motion.div>
+
+                                    {/* Recipient Option */}
+                                    <motion.div 
+                                        whileHover={{ y: -5 }}
+                                        className="border border-gray-200 rounded-xl p-6 cursor-pointer hover:border-red-200 hover:bg-red-50 transition-all"
+                                        onClick={() => handleRoleSelect("generalUser")}
+                                    >
+                                        <div className="flex items-center mb-4">
+                                            <div className="bg-red-100 p-3 rounded-full mr-4">
+                                                <FiUser className="text-red-600 text-xl" />
+                                            </div>
+                                            <h3 className="text-lg font-medium text-gray-800">{t.generalUser}</h3>
+                                        </div>
+                                        <p className="text-gray-600 mb-4">{t.userDescription}</p>
+                                        <ul className="space-y-2 text-sm text-gray-600">
+                                            {t.recipientBenefits.map((benefit, index) => (
+                                                <li key={index} className="flex items-start">
+                                                    <span className="text-red-500 mr-2">•</span>
+                                                    {benefit}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <div className="mt-6 flex justify-end">
+                                            <button className="flex items-center text-red-600 font-medium">
+                                                {t.continue} <FiArrowRight className="ml-2" />
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="registration-form"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
                             >
-                                Already have an account? Login
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                                {/* Navigation Back */}
+                                <div className="p-4 border-b border-gray-100">
+                                    <button 
+                                        onClick={handleBackToSelection}
+                                        className="flex items-center text-red-600 text-sm font-medium"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                                        </svg>
+                                        {language === 'en' ? 'Back to selection' : 'العودة إلى الاختيار'}
+                                    </button>
+                                </div>
+
+                                {/* Form */}
+                                <div className="p-6 md:p-8">
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={role}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            {role === "donor" ? <DonorRegister /> : <GeneralUserRegister />}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
             </div>
         </div>
     );

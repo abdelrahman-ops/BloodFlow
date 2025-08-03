@@ -1,7 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { motion } from 'framer-motion';
+import { useLanguageStore } from "../stores/languageStore";
 
 const Search = () => {
+    const { language } = useLanguageStore();
     const [location, setLocation] = useState("");
     const [bloodType, setBloodType] = useState("");
     const [results, setResults] = useState([]);
@@ -10,6 +13,7 @@ const Search = () => {
     const resultsPerPage = 20; // Number of results per page
 
     const handleSearch = async (e) => {
+        
         e.preventDefault();
         setError(""); // Clear previous errors
         setResults([]); // Clear previous results

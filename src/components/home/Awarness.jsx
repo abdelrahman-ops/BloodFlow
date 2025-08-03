@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import assets from '../assets/assets.js';
+import assets from '../../assets/assets.js';
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';

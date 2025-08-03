@@ -1,0 +1,20 @@
+{
+  "short_name": "BloodFlow",
+  "name": "BloodFlow Emergency App",
+  "icons": [
+    {
+      "src": "src/assets/icons/blood.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#d32f2f"
+}

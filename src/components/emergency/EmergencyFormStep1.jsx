@@ -1,0 +1,286 @@
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from 'react';
+import { FaPhone, FaHospital, FaUser, FaTint, FaNotesMedical } from 'react-icons/fa';
+import { PiDropFill } from "react-icons/pi";
+import { MdLocationOn, MdGpsFixed } from 'react-icons/md';
+import { motion } from 'framer-motion';
+
+const EmergencyFormStep1 = ({
+  formData,
+  handleChange,
+  locationMethod,
+  handleLocationMethod,
+  governorates,
+  bloodTypes,
+  t,
+  language,
+  setStep
+}) => {
+  return (
+    <motion.div
+      key="step1"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.3 }}
+      className="p-6 md:p-8"
+    >
+      <form onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Personal Information */}
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <FaUser className="mr-2 text-red-500" />
+              {language === 'en' ? 'Patient Information' : 'معلومات المريض'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.name[language]} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.phone[language]} <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FaPhone className="text-gray-400" />
+                  </div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Blood Details */}
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <FaTint className="mr-2 text-red-500" />
+              {language === 'en' ? 'Blood Details' : 'تفاصيل الدم المطلوب'}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.bloodType[language]} <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="bloodType"
+                  value={formData.bloodType}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all appearance-none bg-white"
+                >
+                  <option value="">{language === 'en' ? 'Select blood type' : 'اختر فصيلة الدم'}</option>
+                  {bloodTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.units[language]} <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <PiDropFill className="text-gray-400" />
+                  </div>
+                  <input
+                    type="number"
+                    name="units"
+                    min="1"
+                    max="10"
+                    value={formData.units}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.urgency[language]} <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.entries(t.urgencyOptions).map(([key, value]) => (
+                    <label key={key} className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
+                      formData.urgency === key 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-300 hover:border-red-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="urgency"
+                        value={key}
+                        checked={formData.urgency === key}
+                        onChange={handleChange}
+                        className="text-red-600 focus:ring-red-500"
+                      />
+                      <span>{value[language]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Location Information */}
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <MdLocationOn className="mr-2 text-red-500" />
+              {language === 'en' ? 'Location Information' : 'معلومات الموقع'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t.formLabels.location[language]} <span className="text-red-500">*</span>
+                </label>
+                <div className="flex flex-col space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleLocationMethod('gps')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-lg transition-all ${
+                        locationMethod === 'gps'
+                          ? 'bg-red-100 text-red-600 border border-red-200'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <MdGpsFixed />
+                      {t.actions.getLocation[language]}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleLocationMethod('manual')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-lg transition-all ${
+                        locationMethod === 'manual'
+                          ? 'bg-red-100 text-red-600 border border-red-200'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <MdLocationOn />
+                      {t.actions.manualLocation[language]}
+                    </button>
+                  </div>
+
+                  {locationMethod === 'manual' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {t.formLabels.governorate[language]} <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          name="governorate"
+                          value={formData.governorate}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all appearance-none bg-white"
+                        >
+                          <option value="">{language === 'en' ? 'Select governorate' : 'اختر المحافظة'}</option>
+                          {governorates.map(gov => (
+                            <option key={gov.name} value={gov.name}>{gov.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {t.formLabels.district[language]} <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          name="district"
+                          value={formData.district}
+                          onChange={handleChange}
+                          required
+                          disabled={!formData.governorate}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all appearance-none bg-white"
+                        >
+                          <option value="">{language === 'en' ? 'Select district' : 'اختر الحي/المدينة'}</option>
+                          {formData.governorate && 
+                            governorates
+                              .find(g => g.name === formData.governorate)
+                              ?.districts.map(district => (
+                                <option key={district} value={district}>{district}</option>
+                              ))
+                          }
+                        </select>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.hospital[language]}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FaHospital className="text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="hospital"
+                    value={formData.hospital}
+                    onChange={handleChange}
+                    className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t.formLabels.notes[language]}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 pt-3 pointer-events-none">
+                    <FaNotesMedical className="text-gray-400" />
+                  </div>
+                  <textarea
+                    name="notes"
+                    rows={3}
+                    value={formData.notes}
+                    onChange={handleChange}
+                    className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 flex justify-end">
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2"
+          >
+            {t.actions.next[language]}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </motion.div>
+  );
+};
+
+export default EmergencyFormStep1;
