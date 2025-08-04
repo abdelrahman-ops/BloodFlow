@@ -52,13 +52,13 @@ const DonorRegister = () => {
         const getFcmToken = async () => {
             try {
                 const token = await generateToken();
-                console.log('token from donor register:', token);
+                // console.log('token from donor register:', token);
                 
                 if (token) {
                     setFcmToken(token);
                 }
             } catch (error) {
-                console.error("Error getting FCM token:", error);
+                // console.error("Error getting FCM token:", error);
             }
         };
 

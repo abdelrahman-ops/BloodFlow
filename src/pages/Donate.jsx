@@ -111,8 +111,8 @@ const DonateBlood = () => {
       });
 
       const donorId = registerResponse.data.user.id;
-      console.log("donor ID: ",donorId);
-      console.log("Hospital ID: ",hospitalId);
+      // console.log("donor ID: ",donorId);
+      // console.log("Hospital ID: ",hospitalId);
 
       await axios.post("https://bfserver.vercel.app/api/donations/create", {
         donorId,

@@ -52,10 +52,10 @@ const DonorDashboard = () => {
     handleLogout,
   } = useDonorDashboard();
 
-  console.log('/auth/me user: ', user);
+  // console.log('/auth/me user: ', user);
   const donations = user.donorInfo.donationHistory;
-  console.log('donations: ', donations);
-  console.log('notifications: ', notifications);
+  // console.log('donations: ', donations);
+  // console.log('notifications: ', notifications);
 
   const chartData = donationTrends.labels.map((label, index) => ({
     month: label,

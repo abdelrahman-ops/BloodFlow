@@ -100,7 +100,7 @@ const GeneralUserRegister = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Validation and submission logic
-        console.log(formData);
+        // console.log(formData);
     };
 
     return (

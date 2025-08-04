@@ -152,11 +152,11 @@ const EmergencyRequestPage = () => {
 
     const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submit button clicked');
+    // console.log('Submit button clicked');
     setIsSubmitting(true);
     
     try {
-        console.log('Form data being submitted:', formData);
+        // console.log('Form data being submitted:', formData);
         // 1. First validate required fields
         if (!formData.name || !formData.phone || !formData.bloodType || !formData.governorate) {
             const errorMsg = language === 'en' 
