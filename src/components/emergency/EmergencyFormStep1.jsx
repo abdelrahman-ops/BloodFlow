@@ -29,7 +29,7 @@ const EmergencyFormStep1 = ({
     const fetchHospitals = async () => {
       try {
         setLoadingHospitals(true);
-        const response = await axios.get(`${url}/hospitals'`);
+        const response = await axios.get(`${url}/hospitals`);
         setHospitals(response.data);
       } catch (error) {
         console.error('Error fetching hospitals:', error);
