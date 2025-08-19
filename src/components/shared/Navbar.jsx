@@ -1,36 +1,44 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHeartbeat, FaUser, FaLanguage, FaTint, FaTimes, FaBars } from 'react-icons/fa';
 import { RiNotification2Fill } from "react-icons/ri";
 import { PiDropFill } from "react-icons/pi";
-import useAuthStore from '../../stores/authStore.ts';
-import { useLanguageStore } from '../../stores/languageStore.ts';
-import Notification from '../donorDashboard/Notifications/Notification.jsx';
-import { useDonorDashboard } from '../../controller/donorDashboardController.ts';
+import useAuthStore from '../../stores/authStore';
+import { useLanguageStore } from '../../stores/languageStore';
+import Notification from '../donorDashboard/Notifications/Notification';
 import { toast } from 'react-toastify';
+import { FiArrowRight } from 'react-icons/fi';
+import useNotificationStore from '../../stores/notificationStore';
 
 const Navbar = () => {
     const {
         notifications,
-        toggleNotifications,
-        handleMarkNotificationAsRead,
-    } = useDonorDashboard();
+        unreadCount,
+        fetchNotifications,
+        markNotificationRead,
+        loading: notificationsloading
+    } = useNotificationStore();
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
     const [drops, setDrops] = useState([]);
-    const [showNotification, setShowNotification] = useState(false);
+    const [showNotificationPanel , setShowNotificationPanel] = useState(false);
 
     const { language, toggleLanguage } = useLanguageStore();
-    const {isAuthenticated , logout , user} = useAuthStore();
-    
+    const { isAuthenticated, logout, user } = useAuthStore();
+
     const navigate = useNavigate();
     
     const handleNotificationRead = async (id) => {
-        const { message } = await handleMarkNotificationAsRead(id);
-        toast.success(message);
+        try {
+            await markNotificationRead(id);
+            toast.success("Notification marked as read");
+        } catch (error) {
+            toast.error("Failed to mark notification as read",error);
+        }
     };
 
     useEffect(() => {
@@ -100,9 +108,9 @@ const Navbar = () => {
 
     const handleLoginClick = () => {
         if(isAuthenticated) {
-            const path = user?.isAdmin 
-                ? `/admin/dashboard/${user.id}` 
-                : `/donor/dashboard/me`;
+            const path = user?.role === 'admin' 
+                ? '/admin/dashboard' 
+                : '/donor/dashboard/me';
             navigate(path);
         } else {
             setShowLoginPopup(true);
@@ -113,6 +121,7 @@ const Navbar = () => {
         logout();
         navigate('/');
         setIsMenuOpen(false);
+        setShowNotificationPanel(false);
     };
 
     const handleClosePopup = () => setShowLoginPopup(false);
@@ -130,6 +139,15 @@ const Navbar = () => {
         { path: "/#features", label: labels[language].features, icon: <FaTint />, isAnchor: true }
     ];
 
+    const handleNotificationClick = () => {
+        const newShowState = !showNotificationPanel;
+        setShowNotificationPanel(newShowState);
+        
+        if (newShowState) {
+            fetchNotifications();
+        }
+    };
+
     return (
         <>
             <motion.nav
@@ -138,7 +156,7 @@ const Navbar = () => {
                 transition={{ duration: 0.5 }}
                 className={`${
                     isScrolled ? "bg-red-700 shadow-xl" : "bg-gradient-to-r from-red-700 to-red-600"
-                } text-white fixed top-0 left-0 w-full z-50 transition-colors duration-300`}
+                } text-white fixed top-0 left-0 w-full z-40 transition-colors duration-300`}
             >
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center py-3">
@@ -192,34 +210,26 @@ const Navbar = () => {
                             {isAuthenticated && (
                                 <div className="relative">
                                     <button 
-                                        onClick={() => {
-                                            setShowNotification(!showNotification);
-                                            if (!showNotification) {
-                                                toggleNotifications(); // Fetch notifications if needed
-                                            }
-                                        }}
+                                        onClick={handleNotificationClick}
                                         className="p-2 rounded-full hover:bg-red-800 transition-colors relative"
                                     >
                                         <RiNotification2Fill className="text-xl" />
-                                        {notifications?.notifications?.filter(n => !n.read).length > 0 && (
+                                        {unreadCount > 0 && (
                                             <span className="absolute top-0 right-0 bg-yellow-400 text-red-700 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                {notifications.notifications.filter(n => !n.read).length}
+                                                {unreadCount}
                                             </span>
                                         )}
                                     </button>
 
                                     <AnimatePresence>
-                                        {
-                                            showNotification &&  (
+                                        {showNotificationPanel && (
                                             <Notification
-                                                notifications={notifications?.notifications || []}
+                                                notifications={notifications}
                                                 onMarkAsRead={handleNotificationRead}
-                                                onDismiss={() => setShowNotification(false)}
-                                                onClose={() => setShowNotification(false)}
+                                                onDismiss={() => setShowNotificationPanel(false)}
+                                                onClose={() => setShowNotificationPanel(false)}
                                             />
-                                            )
-                                        }
-                                        
+                                        )}
                                     </AnimatePresence>
                                 </div>
                             )}
@@ -317,9 +327,9 @@ const Navbar = () => {
                                     {isAuthenticated ? (
                                         <>
                                             <Link 
-                                                to={user?.isAdmin 
-                                                    ? `/admin/dashboard/${user.id}` 
-                                                    : `/donor/dashboard/${user.id}`}
+                                                to={user?.role === 'admin' 
+                                                    ? '/admin/dashboard' 
+                                                    : '/donor/dashboard/me'}
                                                 className="block bg-white text-red-600 font-bold py-2 px-4 rounded-lg text-center mt-4 hover:bg-red-100 transition-colors"
                                                 onClick={() => setIsMenuOpen(false)}
                                             >
@@ -363,68 +373,156 @@ const Navbar = () => {
             <AnimatePresence>
                 {showLoginPopup && (
                     <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-                        onClick={handleClosePopup}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50 p-4"
+                    onClick={handleClosePopup}
                     >
-                        <motion.div 
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            className="bg-white rounded-xl p-6 shadow-xl w-96 max-w-full mx-4 relative"
-                            onClick={(e) => e.stopPropagation()}
+                    <motion.div 
+                        initial={{ scale: 0.95, y: 10, opacity: 0 }}
+                        animate={{ scale: 1, y: 0, opacity: 1 }}
+                        exit={{ scale: 0.95, y: 10, opacity: 0 }}
+                        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden border border-gray-100"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Decorative elements */}
+                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-red-100 rounded-full opacity-20"></div>
+                        <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-red-200 rounded-full opacity-10"></div>
+                        
+                        {/* Close button */}
+                        <button 
+                        onClick={handleClosePopup}
+                        className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
                         >
-                            <button 
-                                onClick={handleClosePopup}
-                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                            >
-                                <FaTimes />
-                            </button>
-                            
-                            <div className="text-center mb-6">
-                                <PiDropFill className="text-red-600 text-5xl mx-auto mb-3 animate-pulse" />
-                                <h2 className="text-2xl font-bold text-gray-800">
-                                    {labels[language].loginAs}
-                                </h2>
-                                <p className="text-gray-600 mt-2">
-                                    {language === 'en' 
-                                        ? 'Join us in saving lives' 
-                                        : 'انضم إلينا لإنقاذ الأرواح'}
-                                </p>
-                            </div>
-                            
-                            <div className="space-y-4">
-                                <button
-                                    onClick={() => handleNavigation("/login?role=hospital")}
-                                    className="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center"
-                                >
-                                    <FaUser className="mr-2" />
-                                    {labels[language].hospital}
-                                </button>
-                                <button
-                                    onClick={() => handleNavigation("/login?role=donor")}
-                                    className="w-full bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors flex items-center justify-center"
-                                >
-                                    <PiDropFill className="mr-2" />
-                                    {labels[language].donor}
-                                </button>
-                            </div>
-                            
-                            <div className="mt-6 text-center text-sm text-gray-500">
-                                {language === 'en' 
-                                    ? "Don't have an account? " 
-                                    : "ليس لديك حساب؟ "}
-                                <Link 
-                                    to="/register" 
-                                    className="text-red-600 hover:underline"
-                                    onClick={handleClosePopup}
-                                >
-                                    {language === 'en' ? 'Register now' : 'سجل الآن'}
-                                </Link>
-                            </div>
+                        <FaTimes className="text-lg" />
+                        </button>
+                        
+                        {/* Header */}
+                        <div className="pt-10 pb-6 px-8 text-center relative z-10">
+                        <motion.div
+                            animate={{ 
+                            scale: [1, 1.1, 1],
+                            rotate: [0, 5, -5, 0]
+                            }}
+                            transition={{ 
+                            duration: 1.5,
+                            repeat: Infinity,
+                            repeatDelay: 2
+                            }}
+                            className="mx-auto w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-4 shadow-inner border border-red-100"
+                        >
+                            <PiDropFill className="text-red-500 text-3xl animate-pulse" />
                         </motion.div>
+                        
+                        <motion.h2 
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                            className="text-2xl font-bold text-gray-800 font-sans"
+                        >
+                            {labels[language].loginAs}
+                        </motion.h2>
+                        <motion.p 
+                            initial={{ y: -5, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.15 }}
+                            className="text-gray-500 mt-2 text-sm"
+                        >
+                            {language === 'en' 
+                            ? 'Join our life-saving community' 
+                            : 'انضم إلى مجتمعنا المنقذ للحياة'}
+                        </motion.p>
+                        </div>
+                        
+                        {/* Role selection */}
+                        <div className="px-8 pb-8 space-y-6 relative z-10">
+                        {/* Hospital Admin Card */}
+                        <motion.div
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            whileHover={{ y: -3 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="group"
+                        >
+                            <div className="bg-gradient-to-r from-red-50 to-white rounded-xl p-0.5 shadow-sm border border-gray-100 group-hover:border-red-200 transition-all">
+                            <div className="bg-white rounded-[11px] p-5">
+                                <button
+                                onClick={() => handleNavigation("/login?role=hospital")}
+                                className="w-full flex items-center justify-between"
+                                >
+                                <div className="flex items-center">
+                                    <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center mr-4">
+                                    <FaUser className="text-red-600" />
+                                    </div>
+                                    <div className="text-left">
+                                    <h3 className="font-semibold text-gray-800">{labels[language].hospital}</h3>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {language === 'en' 
+                                        ? 'For medical professionals' 
+                                        : 'للمهنيين الطبيين'}
+                                    </p>
+                                    </div>
+                                </div>
+                                <FiArrowRight className="text-gray-400 group-hover:text-red-500 transition-colors" />
+                                </button>
+                            </div>
+                            </div>
+                            <Link 
+                            to="/admin/register" 
+                            state={{ role: 'hospital' }}
+                            className="block text-center mt-2 text-sm text-red-600 hover:text-red-700 transition-colors font-medium"
+                            onClick={handleClosePopup}
+                            >
+                            {language === 'en' ? 'Create admin account →' : 'إنشاء حساب مسؤول →'}
+                            </Link>
+                        </motion.div>
+                        
+                        {/* Donor Card */}
+                        <motion.div
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.25 }}
+                            whileHover={{ y: -3 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="group"
+                        >
+                            <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-0.5 shadow-sm border border-gray-100 group-hover:border-gray-300 transition-all">
+                            <div className="bg-white rounded-[11px] p-5">
+                                <button
+                                onClick={() => handleNavigation("/login?role=donor")}
+                                className="w-full flex items-center justify-between"
+                                >
+                                <div className="flex items-center">
+                                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center mr-4">
+                                    <PiDropFill className="text-gray-600" />
+                                    </div>
+                                    <div className="text-left">
+                                    <h3 className="font-semibold text-gray-800">{labels[language].donor}</h3>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {language === 'en' 
+                                        ? 'For blood donors' 
+                                        : 'للمتبرعين بالدم'}
+                                    </p>
+                                    </div>
+                                </div>
+                                <FiArrowRight className="text-gray-400 group-hover:text-gray-600 transition-colors" />
+                                </button>
+                            </div>
+                            </div>
+                            <Link 
+                            to="/register" 
+                            state={{ role: 'donor' }}
+                            className="block text-center mt-2 text-sm text-gray-600 hover:text-gray-800 transition-colors font-medium"
+                            onClick={handleClosePopup}
+                            >
+                            {language === 'en' ? 'Become a donor →' : 'كن متبرعًا →'}
+                            </Link>
+                        </motion.div>
+                        </div>
+                    </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -1,10 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguageStore } from "../../stores/languageStore";
 import useAuthStore from "../../stores/authStore";
 import { motion } from "framer-motion";
 import { generateToken } from "../../services/firebase";
-import axios from "axios";
 import { toast } from "react-toastify";
 import FormHeader from "./components/FormHeader";
 import PersonalInfoSection from "./components/PersonalInfoSection";

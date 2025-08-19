@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useLanguageStore } from '../../stores/languageStore';
+import { url } from '../../api/constant/URL';
 
 
 const useEmergencyNotification = () => {
@@ -28,7 +29,7 @@ const useEmergencyNotification = () => {
             };
 
             // 2. Send to backend
-            const response = await axios.post('http://localhost:5000/api/emergency', requestData);
+            const response = await axios.post(`${url}/emergency/guest`, requestData);
             
             // 3. Show success message
             toast.success(

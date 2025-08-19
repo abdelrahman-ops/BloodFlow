@@ -7,7 +7,6 @@ import bloodDrop from '../../assets/icons/blood.png';
 import Stats from './Stats';
 import { Link } from "react-router-dom";
 import { useLanguageStore } from "../../stores/languageStore";
-import EmergencyButton from "../shared/EmergencyButton";
 
 const Hero = () => {
     const { language } = useLanguageStore();
@@ -326,7 +325,7 @@ const Hero = () => {
                                 {content.donorOption}
                             </Link>
                             <Link
-                                to="/login"
+                                to="/register?role=generalUser"
                                 className="flex-1 px-6 py-4 bg-gradient-to-r from-white to-gray-100 hover:from-gray-100 hover:to-gray-200 text-red-600 font-bold rounded-lg shadow-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center text-center"
                             >
                                 <FaHandsHelping className="mr-3 text-xl" />
@@ -486,8 +485,7 @@ const Hero = () => {
                 )}
             </AnimatePresence>
 
-            {/* Emergency button - fixed position */}
-            <EmergencyButton />
+
 
             {/* Scroll indicator for desktop */}
             <motion.div 

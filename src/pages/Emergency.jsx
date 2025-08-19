@@ -12,6 +12,7 @@ import useAuthStore from '../stores/authStore';
 import { useLanguageStore } from '../stores/languageStore';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { url } from '../api/constant/URL';
 
 const EmergencyRequestPage = () => {
     const navigate = useNavigate();
@@ -151,99 +152,85 @@ const EmergencyRequestPage = () => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    // console.log('Submit button clicked');
-    setIsSubmitting(true);
-    
-    try {
-        // console.log('Form data being submitted:', formData);
-        // 1. First validate required fields
-        if (!formData.name || !formData.phone || !formData.bloodType || !formData.governorate) {
-            const errorMsg = language === 'en' 
-                ? 'Please fill all required fields' 
-                : 'يرجى ملء جميع الحقول المطلوبة';
-            console.error('Validation failed:', errorMsg); // Debug 3
-            throw new Error(errorMsg);
-        }
+        e.preventDefault();
+        setIsSubmitting(true);
+        
+        try {
+            if (!formData.name || !formData.phone || !formData.bloodType || !formData.governorate) {
+                const errorMsg = language === 'en' 
+                    ? 'Please fill all required fields' 
+                    : 'يرجى ملء جميع الحقول المطلوبة';
+                throw new Error(errorMsg);
+            }
 
-        // 2. Show initial progress
-        setProgress(10);
-        
-        // 3. Send notification to donors
-        const result = await notifyDonors(formData);
-        setProgress(30);
-        
-        // 4. Simulate notification progress (UI effect)
-        const interval = setInterval(() => {
-            setProgress(prev => {
-                const newProgress = prev + 5;
-                if (newProgress >= 90) {
-                    clearInterval(interval);
-                    return 90;
-                }
-                return newProgress;
-            });
-        }, 200);
+            setProgress(10);
+            
+            const result = await notifyDonors(formData);
+            setProgress(30);
+            
+            const interval = setInterval(() => {
+                setProgress(prev => {
+                    const newProgress = prev + 5;
+                    if (newProgress >= 90) {
+                        clearInterval(interval);
+                        return 90;
+                    }
+                    return newProgress;
+                });
+            }, 200);
 
-        // 5. If authenticated, track this request
-        if (isAuthenticated) {
-            await trackDonorResponses(result._id);
-        }
-        
-        // 6. Complete the progress
-        setProgress(100);
-        setShowSuccess(true);
-        
-        // 7. Move to completion step after delay
-        setTimeout(() => setStep(3), 1500);
+            if (isAuthenticated) {
+                await trackDonorResponses(result._id);
+            }
+            
+            setProgress(100);
+            setShowSuccess(true);
+            
+            setTimeout(() => setStep(3), 1500);
         } catch (error) {
             setProgress(0);
-            // Error toast is already shown by notifyDonors
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const trackDonorResponses = async (requestId) => {
-    try {
-        // 1. Create EventSource connection for real-time updates
-        const eventSource = new EventSource(`http://localhost:5000/api/emergency/${requestId}/updates`);
-        
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+        try {
+            const eventSource = new EventSource(`${url}/emergency/${requestId}/updates`);
             
-            // 2. Update UI when donors respond
-            if (data.type === 'donor_response') {
-                toast.info(
-                    language === 'en' 
-                        ? `${data.donorName} can help! Contact: ${data.phone}` 
-                        : `${data.donorName} يمكنه المساعدة! اتصل بـ: ${data.phone}`
-                );
-            }
-            
-            // 3. Close connection when request is fulfilled
-            if (data.type === 'request_fulfilled') {
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'donor_response') {
+                    toast.info(
+                        language === 'en' 
+                            ? `${data.donorName} can help! Contact: ${data.phone}` 
+                            : `${data.donorName} يمكنه المساعدة! اتصل بـ: ${data.phone}`
+                    );
+                }
+                
+                if (data.type === 'request_fulfilled') {
+                    eventSource.close();
+                    toast.success(
+                        language === 'en'
+                            ? 'Request fulfilled! Thank you donors!'
+                            : 'تم تلبية الطلب! شكراً للمتبرعين!'
+                    );
+                }
+            };
+
+            eventSource.onerror = () => {
                 eventSource.close();
-                toast.success(
-                    language === 'en'
-                        ? 'Request fulfilled! Thank you donors!'
-                        : 'تم تلبية الطلب! شكراً للمتبرعين!'
-                );
-            }
-        };
+            };
 
-        eventSource.onerror = () => {
-            eventSource.close();
-        };
-
-        return () => eventSource.close();
-    } catch (error) {
-        console.error('Error tracking donor responses:', error);
-    }
-};
+            return () => eventSource.close();
+        } catch (error) {
+            console.error('Error tracking donor responses:', error);
+        }
+    };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-red-50 to-white p-4 md:p-8 mt-10">
+        <div className="min-h-screen bg-gradient-to-b from-red-50 to-white p-4 pb-20 md:p-8 mt-12">
             <div className="max-w-4xl mx-auto">
                 <EmergencyHeader 
                     title={t.title[language]} 
@@ -257,11 +244,12 @@ const EmergencyRequestPage = () => {
                 />
 
                 {/* Form Content */}
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
                     <AnimatePresence mode="wait">
                         {step === 1 && (
                             <EmergencyFormStep1
                                 formData={formData}
+                                setFormData={setFormData}
                                 handleChange={handleChange}
                                 locationMethod={locationMethod}
                                 handleLocationMethod={handleLocationMethod}

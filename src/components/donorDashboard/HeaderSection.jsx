@@ -19,7 +19,7 @@
 //             {new Date().toLocaleDateString()}
 //           </span>
 //           <span className={`px-2 py-1 text-xs rounded-full ${darkMode ? "bg-gray-700" : "bg-red-100"} text-red-500`}>
-//             {user?.donorInfo?.bloodType || "Unknown"} Type
+//             {user?.donor?.bloodType || "Unknown"} Type
 //           </span>
 //         </div>
 //       </div>
