@@ -6,6 +6,7 @@ import { MdLocationOn, MdGpsFixed } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {url} from '../../api/constant/URL';
 
 const EmergencyFormStep1 = ({
   formData,
@@ -28,7 +29,7 @@ const EmergencyFormStep1 = ({
     const fetchHospitals = async () => {
       try {
         setLoadingHospitals(true);
-        const response = await axios.get('http://localhost:5000/api/v2/hospitals');
+        const response = await axios.get(`${url}/hospitals'`);
         setHospitals(response.data);
       } catch (error) {
         console.error('Error fetching hospitals:', error);
